@@ -8,37 +8,31 @@ require_once 'vendor/autoload.php';
 
 $router = new \Phroute\Phroute\RouteCollector(new \Phroute\Phroute\RouteParser());
 
-function route() {
+function processInput(){
+    $url = array_slice(explode('/', $_SERVER['REQUEST_URI']), 2);
 
+    $string = '';
+    for ($i = 0; $i < count($url); $i++) {
+        $string = $string . '/' . $url[$i];
+    }
+
+    return $string;
 }
 
-$router->get('Network_Project/davo', function () {
-    $milisec = microtime(true) * 1000;
-    $session = new \Core\Session\Session();
-    $session->set('davo', 'david');
-    $a = new \App\Controller\ClientController();
-//    $a->test();
-    $dataBinder = new \Core\DataBinder\DataBinder();
-    $client = new ClientDTO();
-    $arr = ['username' => 'fdsfdsa', 'front_image' => 'fdsafdsa',
-            'front_image_one' => 'fdsafsasa', 'front_image_2' => 'fdsafsasa',
-            'email' => 'david_786@abv.bg'];
-    $res = $dataBinder->bindData($arr, $client);
-    print_r($res);
 
-    echo '<br />';
-    print_r('Memory: ' . memory_get_usage() / 1024 / 1024 . "MB");
-    echo '<br />';
-
-    $milisecafter = microtime(true) * 1000;
-    print_r("Time: " . ($milisecafter - $milisec));
-    echo '<br />';
+$router->get('/clients/1', function () {
+    $db = new PDO("mysql:host=localhost;dbname=network_controll;charset=utf8", "root", "");
+    $clientController = new \App\Controller\ClientController();
+    $clientController->showClients();
 });
 
-$router->get('Network_Project/rali', function () {
-    return 'ralicaaaaa';
+$router->get('/client/add', function () {
+    require_once 'Front Layer/start.php';
+
+    $clientController = new \App\Controller\ClientController();
+    $clientController->addClient($db);
 });
 
 $dispatcher =  new \Phroute\Phroute\Dispatcher($router->getData());
 
-echo $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+echo $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], processInput());

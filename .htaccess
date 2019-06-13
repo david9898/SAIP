@@ -1,6 +1,7 @@
 <IfModule mod_rewrite.c>
 
     RewriteEngine On
+    RewriteCond %{REQUEST_URI} !/node_modules
     RewriteCond %{REQUEST_URI} !/Public
     RewriteCond %{REQUEST_FILENAME}  -f [OR]
     RewriteCond %{REQUEST_FILENAME} !-f
