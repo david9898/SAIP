@@ -11,6 +11,7 @@
         }
     ],
     "require": {
-        "phroute/phroute": "dev-master"
+        "phroute/phroute": "dev-master",
+        "plasticbrain/php-flash-messages": "dev-master"
     }
 }

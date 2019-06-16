@@ -12,12 +12,19 @@ class ClientDTO extends Validator
     private $firstName;
     private $lastName;
     private $phone;
-    private $isActive;
     private $email;
-    private $postCode;
     private $street;
-    private $mac;
-    private $fireWall;
+    private $neighborhood;
+    private $dateRegister;
+    private $description;
+    private $streetNumber;
+
+    public function __construct()
+    {
+        $this->setNeighborhood(null);
+        $this->setDescription(null);
+        $this->dateRegister = time();
+    }
 
     /**
      * @return mixed
@@ -48,7 +55,9 @@ class ClientDTO extends Validator
      */
     public function setTown($town)
     {
-        $this->town = $town;
+        if ( $this->notEmpty($town) ) {
+            $this->town = htmlspecialchars($town);
+        }
     }
 
     /**
@@ -64,7 +73,9 @@ class ClientDTO extends Validator
      */
     public function setAbonament($abonament)
     {
-        $this->abonament = $abonament;
+        if ( $this->notEmpty($abonament) ) {
+            $this->abonament = $abonament;
+        }
     }
 
     /**
@@ -80,7 +91,9 @@ class ClientDTO extends Validator
      */
     public function setFirstName($firstName)
     {
-        $this->firstName = $firstName;
+        if ( $this->notEmpty($firstName) ) {
+            $this->firstName = htmlspecialchars($firstName);
+        }
     }
 
     /**
@@ -96,7 +109,9 @@ class ClientDTO extends Validator
      */
     public function setLastName($lastName)
     {
-        $this->lastName = $lastName;
+        if ( $this->notEmpty($lastName) ) {
+            $this->lastName = htmlspecialchars($lastName);
+        }
     }
 
     /**
@@ -112,23 +127,9 @@ class ClientDTO extends Validator
      */
     public function setPhone($phone)
     {
-        $this->phone = $phone;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsActive()
-    {
-        return $this->isActive;
-    }
-
-    /**
-     * @param mixed $isActive
-     */
-    public function setIsActive($isActive)
-    {
-        $this->isActive = $isActive;
+        if ( $this->notEmpty($phone) ) {
+            $this->phone = htmlspecialchars($phone);
+        }
     }
 
     /**
@@ -144,23 +145,9 @@ class ClientDTO extends Validator
      */
     public function setEmail($email)
     {
-        $this->email = $email;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPostCode()
-    {
-        return $this->postCode;
-    }
-
-    /**
-     * @param mixed $postCode
-     */
-    public function setPostCode($postCode)
-    {
-        $this->postCode = $postCode;
+        if ( $this->validateEmail($email) ) {
+            $this->email = htmlspecialchars($email);
+        }
     }
 
     /**
@@ -176,39 +163,66 @@ class ClientDTO extends Validator
      */
     public function setStreet($street)
     {
-        $this->street = $street;
+        if ( $this->notEmpty($street) ) {
+            $this->street = $street;
+        }
     }
 
     /**
      * @return mixed
      */
-    public function getMac()
+    public function getNeighborhood()
     {
-        return $this->mac;
+        return $this->neighborhood;
     }
 
     /**
-     * @param mixed $mac
+     * @param mixed $neighborhood
      */
-    public function setMac($mac)
+    public function setNeighborhood($neighborhood)
     {
-        $this->mac = $mac;
+        $this->neighborhood = $neighborhood;
     }
 
     /**
      * @return mixed
      */
-    public function getFireWall()
+    public function getDateRegister()
     {
-        return $this->fireWall;
+        return $this->dateRegister;
     }
 
     /**
-     * @param mixed $fireWall
+     * @return mixed
      */
-    public function setFireWall($fireWall)
+    public function getDescription()
     {
-        $this->fireWall = $fireWall;
+        return $this->description;
     }
 
+    /**
+     * @param mixed $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = htmlspecialchars($description);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStreetNumber()
+    {
+        return $this->streetNumber;
+    }
+
+    /**
+     * @param mixed $streetNumber
+     */
+    public function setStreetNumber($streetNumber)
+    {
+        if ( $this->notEmpty($streetNumber) ) {
+            $this->streetNumber = htmlspecialchars($streetNumber);
+        }
+    }
 }

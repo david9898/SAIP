@@ -8,21 +8,13 @@ use App\Repository\AbonamentRepository;
 use App\Repository\TownRepository;
 use Core\Controller\AbstractController;
 use Core\Database\PrepareStatementInterface;
-use Core\Session\Session;
 
 class ClientController extends AbstractController
 {
-
-    public function test()
-    {
-        $session = new Session();
-        print_r($session->get('davo'));
-
-//        print_r('davoo');
-    }
-
     public function showClients()
     {
+        $this->validateAccess(true);
+
         $this->render('Clients/clientsPaginationTemplate.php', [
             'css' => [
                 'Public/css/clients.css',
@@ -33,6 +25,8 @@ class ClientController extends AbstractController
 
     public function addClient(PrepareStatementInterface $db)
     {
+        $this->validateAccess(true);
+
         $townRepo      = new TownRepository($db);
         $abonamentRepo = new AbonamentRepository($db);
 
@@ -44,11 +38,12 @@ class ClientController extends AbstractController
             'css'        => [
                 'Public/css/header.css',
                 'Public/css/addClient.css',
-                'node_modules/easy_autocomplete/dist/easy-autocomplete.css'
+                'node_modules/easy-autocomplete/dist/easy-autocomplete.min.css',
             ],
             'js'         => [
-                'node_modules/jquery/dist/jquery.js',
-                'node_modules/easy_autocomplete/dist/jquery.easy-autocomplete.js'
+                'node_modules/easy-autocomplete/dist/jquery.easy-autocomplete.min.js',
+                'node_modules/sweetalert/dist/sweetalert.min.js',
+                'Public/js/addClient.js'
             ],
             'towns'      => $towns,
             'abonaments' => $abonaments,

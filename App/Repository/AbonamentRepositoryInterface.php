@@ -9,5 +9,5 @@ use App\DTO\AbonamentDTO;
 interface AbonamentRepositoryInterface
 {
 
-    public function getAbonaments();
+    public function getAbonaments(): \Generator;
 }

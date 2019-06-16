@@ -14,7 +14,7 @@ abstract class Validator
             return true;
         }
 
-        throw new ValidationExeption('Email is not valid!!!');
+        throw new ValidationExeption('Имейла не е валиден');
     }
 
     protected function validateMAC($mac)
@@ -23,7 +23,7 @@ abstract class Validator
             return true;
         }
 
-        throw new ValidationExeption('MAC is not valid!!!');
+        throw new ValidationExeption('МАК адреса не е валиден');
     }
 
     protected function validateIP($ip)
@@ -32,7 +32,7 @@ abstract class Validator
             return true;
         }
 
-        throw new ValidationExeption('IP is not valid!!!');
+        throw new ValidationExeption('ИП адреса не е валиден');
     }
 
     protected function validateByRegex($string, $regex)
@@ -43,7 +43,15 @@ abstract class Validator
             return true;
         }
 
-        throw new ValidationExeption('Regx Exeption!!!');
+        throw new ValidationExeption('Полетата не отговарят на зададените критерии');
     }
 
+    protected function notEmpty($string)
+    {
+        if ( $string !== null && $string !== '' ) {
+            return true;
+        }
+
+        throw new ValidationExeption('Полетата със звезда трябва да са попълнени');
+    }
 }

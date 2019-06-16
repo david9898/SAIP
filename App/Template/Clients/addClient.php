@@ -9,19 +9,19 @@
 ?>
 <section>
 
-    <form>
+    <form class="prevent_submit">
         <div class="form-style-5">
-            <form>
+            <form class="prevent_submit">
                 <fieldset class="second_form_fieldset">
                     <div>
                         <legend><span class="number">1</span> Информация за клиент</legend>
-                        <input type="text" name="field1" placeholder="Име *">
-                        <input type="text" name="field1" placeholder="Фамилия *">
-                        <input type="text" name="field1" placeholder="Телефон *">
-                        <input type="email" name="field2" placeholder="Имейл *">
+                        <input type="text" class="first_name" placeholder="Име *">
+                        <input type="text" class="last_name" placeholder="Фамилия *">
+                        <input type="text" class="phone" placeholder="Телефон *">
+                        <input type="email" class="email" placeholder="Имейл *">
 
                         <label for="abonament">Абонамент:</label>
-                        <select id="abonament" name="field4">
+                        <select id="abonament">
                             <option selected value="none">-</option>
                             <?php foreach ( $data['abonaments'] as $abonament ): ?>
                                 <option value="<?= $abonament->getId() ?>"><?= $abonament->getName() ?></option>
@@ -31,22 +31,24 @@
 
                     <div>
                         <label for="town">Град:</label>
-                        <select id="town" name="field4">
+                        <select id="town">
                             <option selected value="none">-</option>
                             <?php foreach ( $data['towns'] as $town ): ?>
                                 <option value="<?= $town->getId() ?>"><?= $town->getName() ?></option>
                             <?php endforeach; ?>
                         </select>
 
-                        <input type="text" name="field2" placeholder="Улица *">
+                        <input type="text" class="street" placeholder="Улица *">
 
-                        <input type="text" name="field2" placeholder="Квартал">
+                        <input type="text" class="street_number" placeholder="Номер улица *">
 
-                        <textarea name="field3" placeholder="Описание на адреса *"></textarea>
+                        <input type="text" class="neighborhood" placeholder="Квартал">
+
+                        <textarea placeholder="Описание на адреса" class="description"></textarea>
                     </div>
                 </fieldset>
                 <input type="hidden" class="csrf_token" name="csrf_token" value="<?= $data['csrf_token'] ?>">
-                <input type="submit" value="Добави" />
+                <input type="submit" class="add_client" value="Добави" />
             </form>
         </div>
     </form>

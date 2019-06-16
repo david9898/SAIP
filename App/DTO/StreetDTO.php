@@ -40,4 +40,5 @@ class StreetDTO
     {
         $this->name = $name;
     }
+
 }

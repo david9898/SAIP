@@ -16,7 +16,7 @@ class AbonamentRepository implements AbonamentRepositoryInterface
         $this->db = $db;
     }
 
-    public function getAbonaments()
+    public function getAbonaments(): \Generator
     {
         $sql = 'SELECT id, name FROM abonaments';
 

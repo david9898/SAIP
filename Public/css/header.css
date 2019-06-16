@@ -5,6 +5,10 @@ body {
     margin: 0px;
 }
 
+.alert {
+    margin: 0px;
+}
+
 header {
     padding: 10px;
     background-color: #ff0000;

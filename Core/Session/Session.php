@@ -56,4 +56,37 @@ class Session implements SessionInterface
             return false;
         }
     }
+
+    public function delete(string $key): bool
+    {
+        if ( isset($_SESSION[$key]) ) {
+            unset($_SESSION[$key]);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getFlashMessage(): ?array
+    {
+        if ( isset($_SESSION['notification']) ) {
+            $arr = $_SESSION['notification'];
+
+            unset($_SESSION['notification']);
+
+            return $arr;
+        }
+
+        return null;
+    }
+
+    public function addFlashMessage(string $key, string $message): bool
+    {
+        $_SESSION['notification'] = [];
+        $_SESSION['notification']['key'] = $key;
+        $_SESSION['notification']['message'] = $message;
+
+        return true;
+    }
 }

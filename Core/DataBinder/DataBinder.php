@@ -24,7 +24,6 @@ class DataBinder
             }
         }
 
-        print_r($explodeData);
         $classFunctions = get_class_methods($class);
 
         foreach ( $explodeData as $key => $value ) {

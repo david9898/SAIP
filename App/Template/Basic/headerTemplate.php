@@ -4,6 +4,9 @@
         <base href="/Network_project/">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
+        <link rel="stylesheet" href="node_modules/toastr/build/toastr.min.css">
+        <script src="node_modules/jquery/dist/jquery.js"></script>
+        <script src="node_modules/toastr/build/toastr.min.js"></script>
         <?php if ( isset($data['css']) ): ?>
             <?php foreach ($data['css'] as $css): ?>
                 <link rel="stylesheet" href="<?= $css ?>">
@@ -20,6 +23,7 @@
 
         <header>
             <span>SAIP</span>
+            <span><a href="logout">Изход</a></span>
         </header>
 
         <main>

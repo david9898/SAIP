@@ -1,7 +1,5 @@
 <?php
 
-use App\DTO\ClientDTO;
-
 spl_autoload_register();
 
 require_once 'vendor/autoload.php';
@@ -33,6 +31,31 @@ $router->get('/client/add', function () {
     $clientController->addClient($db);
 });
 
+$router->get('/getTownStreets/{id}/{csrfToken}', function ($id, $csrfToken) {
+   require_once 'Front Layer/start.php';
+
+   $streetApiController = new \App\ApiController\StreetApiController();
+   $streetApiController->getTownStreets($db, $id, $csrfToken);
+});
+
+$router->post('/addClient', function () {
+    require_once 'Front Layer/start.php';
+
+    $clientApi = new \App\ApiController\ClientApiController();
+    $clientApi->addClient($db);
+});
+
+$router->any('/login', function () {
+    require_once 'Front Layer/start.php';
+
+    $staffController = new \App\Controller\StaffController();
+    $staffController->login($db);
+});
+
+$router->get('/logout', function () {
+   $staffController = new \App\Controller\StaffController();
+   $staffController->logout();
+});
 $dispatcher =  new \Phroute\Phroute\Dispatcher($router->getData());
 
 echo $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], processInput());
