@@ -55,15 +55,52 @@ CREATE TABLE IF NOT EXISTS `clients` (
   CONSTRAINT `FK_clients_neighborhood` FOREIGN KEY (`neighborhood`) REFERENCES `neighborhoods` (`id`),
   CONSTRAINT `FK_routers_streets` FOREIGN KEY (`street`) REFERENCES `streets` (`id`),
   CONSTRAINT `FK_routers_towns` FOREIGN KEY (`town`) REFERENCES `towns` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 
--- Дъмп данни за таблица network_controll.clients: ~4 rows (approximately)
+-- Дъмп данни за таблица network_controll.clients: ~21 rows (approximately)
 /*!40000 ALTER TABLE `clients` DISABLE KEYS */;
 REPLACE INTO `clients` (`id`, `town`, `abonament`, `first_name`, `neighborhood`, `last_name`, `phone`, `email`, `street`, `street_number`, `date_register`, `description`) VALUES
 	(10, 1, 2, 'David', NULL, 'Ivanov', '89165', 'david_786@abv.bg', 78, 0, 1560526110, ''),
 	(11, 2, 2, 'Spas', 5, 'Spasov', '9864151', 'spas@abv.bg', 458, 0, 1560526337, 'бл. 4 вх. 5 ет. 7'),
 	(12, 2, 2, 'Spas', 5, 'Spasov', '9864151', 'spasaad@abv.bg', 458, 0, 1560526854, 'бл. 4 вх. 5 ет. 7'),
-	(13, 1, 2, 'Poff', NULL, 'POLKO', '8615', 'pofda@abv.bg', 3, 0, 1560527414, '');
+	(13, 1, 2, 'Poff', NULL, 'POLKO', '8615', 'pofda@abv.bg', 3, 0, 1560527414, ''),
+	(16, 3, 2, 'Monika', NULL, 'Ivanova', '11561616', 'monika@abv.bg', 82, 0, 1560690228, ''),
+	(17, 5, 2, 'Ivo', NULL, 'Kostadinov', '5156532', 'ivo@abv.bg', 1072, 0, 1560690468, 'блок. 7, вх. А, ап. 9'),
+	(18, 2, 2, 'Петър', 3, 'Петров', '511332', 'pesho@abv.bg', 711, 0, 1560690527, ''),
+	(19, 1, 1, 'Ивана', NULL, 'Иванова', '7442123', 'ivana@abv.bg', 2, 0, 1560690592, ''),
+	(20, 2, 1, 'Минка', 15, 'Минкова', '1156032235', 'minka@abv.bg', 554, 0, 1560690665, ''),
+	(21, 2, 2, 'Стон', 3, 'Стонев', '2356589', 'ston@abv.bg', 722, 0, 1560690769, ''),
+	(22, 6, 1, 'Полина', 43, 'Полинова', '8953112', 'poli@abv.bg', 1298, 0, 1560690861, ''),
+	(23, 5, 1, 'Стефка', NULL, 'Стефкова', '962313212', 'stefi@abv.bg', 1235, 0, 1560690947, ''),
+	(24, 6, 1, 'Оля', 42, 'Олева', '123565', 'olq@abv.bg', 76, 0, 1560691027, ''),
+	(25, 1, 2, 'Клен', NULL, 'Кленов', '4213265', 'klen@abv.bg', 7, 0, 1560691076, ''),
+	(26, 2, 2, 'Kaloqn', 8, 'Kaloqnov', '1516322', 'kalata@abv.bg', 464, 0, 1560691123, ''),
+	(27, 5, 2, 'Гошо', NULL, 'Гошев', '51323', 'gosho@abv.bg', 1235, 0, 1560691200, ''),
+	(28, 6, 1, 'Милко', 40, 'Милко', '65123', 'milko@abv.bg', 1291, 0, 1560691226, ''),
+	(29, 3, 1, 'Илиана', NULL, 'Илианова', '457866', 'iliana@abv.bg', 1023, 0, 1560691255, ''),
+	(30, 3, 2, 'Karina', NULL, 'Nikolova', '565632', 'karina@abv.bg', 83, 0, 1560691329, ''),
+	(31, 3, 1, 'Antonia', NULL, 'Atanasova', '898656', 'antonia@abv.bg', 83, 0, 1560691363, ''),
+	(32, 1, 2, 'Ivan', NULL, 'Ivanov', '5715', 'ivan@abv.bg', 78, 0, 1560691498, ''),
+	(33, 1, 2, 'Anna', NULL, 'Ivanova', '78865', 'anna@abv.bg', 78, 0, 1560691560, ''),
+	(34, 2, 2, 'Михаела', 5, 'Михайлова', '9816513', 'mihaela@abv.bg', 458, 0, 1560691614, ''),
+	(35, 4, 2, 'Donika', NULL, 'Donikova', '87542', 'donika@abv.bg', 1426, 0, 1560691643, ''),
+	(39, 6, 1, 'Kuci', 41, 'Kuckov', '5121321', 'kuci@abv.bg', 1967, 0, 1560873712, ''),
+	(40, 3, 1, 'Опри', NULL, 'Опров', '1563213', 'opri@abv.bg', 1055, 0, 1560873788, ''),
+	(41, 2, 1, 'Lorcha', 1, 'Lorcheva', '51321', 'loracheto@abv.bg', 663, 0, 1560873878, ''),
+	(42, 5, 2, 'Qgodka', NULL, 'Qgodova', '88964651', 'qgoda@abv.bg', 608, 0, 1560873959, ''),
+	(43, 1, 2, 'Антоанета', NULL, 'Антонова', '4213232', 'antoaneta@abv.bg', 1, 0, 1560873998, ''),
+	(44, 5, 2, 'Violeta', NULL, 'Ivanova', '765133', 'violeta@abv.bg', 608, 0, 1560874050, ''),
+	(45, 4, 2, 'Iliqna', NULL, 'Iliqnova', '887543', 'iliancheto@abv.bg', 1085, 0, 1560874117, ''),
+	(46, 4, 2, 'Stefanka', NULL, 'Stefankova', '9956332', 'stefanka@abv.bg', 1237, 0, 1560874150, ''),
+	(47, 3, 2, 'Polko', NULL, 'Polkov', '894564', 'polko@abv.bg', 1025, 0, 1560874196, ''),
+	(48, 5, 1, 'Barbara', NULL, 'Barbarova', '9846123', 'barbara@abv.bg', 1248, 0, 1560874229, ''),
+	(49, 2, 2, 'Igor', 5, 'Igorov', '74865', 'igor@abv.bg', 460, 0, 1560874264, ''),
+	(50, 1, 2, 'Davidka', NULL, 'Davidkova', '482132', 'davidka@abv.bg', 7, 0, 1560874309, ''),
+	(51, 1, 2, 'Patrisiq', NULL, 'Patrisieva', '2132153', 'patrisiq@abv.bg', 3, 0, 1560874365, ''),
+	(52, 3, 2, 'Kilotka', NULL, 'Kilotova', '85442321', 'kilota@abv.bg', 1050, 0, 1560874396, ''),
+	(53, 4, 2, 'Цветка', NULL, 'Цветкова', '74153', 'cvetka@abv.bg', 1270, 0, 1560874430, ''),
+	(54, 1, 2, 'Djoana', NULL, 'Lozeva', '966323', 'djoana@abv.bg', 51, 0, 1560874478, ''),
+	(55, 4, 2, 'Hristo', NULL, 'Hristov', '2356564', 'hristo@abv.bg', 1300, 0, 1560874953, '');
 /*!40000 ALTER TABLE `clients` ENABLE KEYS */;
 
 -- Дъмп структура за таблица network_controll.neighborhoods
@@ -71,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `neighborhoods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
 
 -- Дъмп данни за таблица network_controll.neighborhoods: ~39 rows (approximately)
 /*!40000 ALTER TABLE `neighborhoods` DISABLE KEYS */;
@@ -131,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `relations_towns_neighborhoods` (
   CONSTRAINT `FK_relations_towns_neighborhoods_towns` FOREIGN KEY (`town_id`) REFERENCES `towns` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Дъмп данни за таблица network_controll.relations_towns_neighborhoods: ~43 rows (approximately)
+-- Дъмп данни за таблица network_controll.relations_towns_neighborhoods: ~39 rows (approximately)
 /*!40000 ALTER TABLE `relations_towns_neighborhoods` DISABLE KEYS */;
 REPLACE INTO `relations_towns_neighborhoods` (`town_id`, `neighborhood_id`) VALUES
 	(2, 1),
@@ -189,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `relations_towns_streets` (
   CONSTRAINT `FK_relations_towns_streets_towns` FOREIGN KEY (`town`) REFERENCES `towns` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Дъмп данни за таблица network_controll.relations_towns_streets: ~1 382 rows (approximately)
+-- Дъмп данни за таблица network_controll.relations_towns_streets: ~1 252 rows (approximately)
 /*!40000 ALTER TABLE `relations_towns_streets` DISABLE KEYS */;
 REPLACE INTO `relations_towns_streets` (`town`, `street`) VALUES
 	(1, 1),
@@ -1604,7 +1641,7 @@ CREATE TABLE IF NOT EXISTS `staff` (
   CONSTRAINT `FK_staff_roles` FOREIGN KEY (`role`) REFERENCES `roles` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
--- Дъмп данни за таблица network_controll.staff: ~1 rows (approximately)
+-- Дъмп данни за таблица network_controll.staff: ~0 rows (approximately)
 /*!40000 ALTER TABLE `staff` DISABLE KEYS */;
 REPLACE INTO `staff` (`id`, `first_name`, `username`, `last_name`, `phone`, `password`, `role`) VALUES
 	(1, 'David', 'david_99', 'Ivanov', '048965', '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 2);
@@ -1617,7 +1654,7 @@ CREATE TABLE IF NOT EXISTS `streets` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1971 DEFAULT CHARSET=utf8;
 
--- Дъмп данни за таблица network_controll.streets: ~1 382 rows (approximately)
+-- Дъмп данни за таблица network_controll.streets: ~1 307 rows (approximately)
 /*!40000 ALTER TABLE `streets` DISABLE KEYS */;
 REPLACE INTO `streets` (`id`, `name`) VALUES
 	(1, 'ул. Патриарх Евтимий'),
