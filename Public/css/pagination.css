@@ -1,0 +1,32 @@
+.davos_pagination {
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.davos_pagination a {
+    text-decoration: none;
+}
+
+.davos_pagination_span {
+    padding: 15px;
+    color: black;
+}
+
+.davos_pagination_span a {
+    color: black;
+    text-decoration: none;
+}
+
+.davos_pagination_span:hover {
+    padding: 15px;
+    color: white;
+    border-radius: 100%;
+    background-color: #ff0000;
+    text-decoration: none;
+}
+
+.active_page {
+    background-color: #FF0000;
+    color: white;
+    border-radius: 100%;
+}

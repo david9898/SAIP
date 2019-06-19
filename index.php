@@ -19,9 +19,10 @@ function processInput(){
 
 
 $router->get('/clients/1', function () {
-    $db = new PDO("mysql:host=localhost;dbname=network_controll;charset=utf8", "root", "");
+    require_once 'Front Layer/start.php';
+
     $clientController = new \App\Controller\ClientController();
-    $clientController->showClients();
+    $clientController->showClients($db);
 });
 
 $router->get('/client/add', function () {
@@ -50,6 +51,20 @@ $router->any('/login', function () {
 
     $staffController = new \App\Controller\StaffController();
     $staffController->login($db);
+});
+
+$router->get('/getMoreClients/{csrfToken}/{firstResult}', function ($csrfToken, $firstResult) {
+    require_once 'Front Layer/start.php';
+
+    $clientApi = new \App\ApiController\ClientApiController();
+    $clientApi->getMoreClients($db, $csrfToken, $firstResult);
+});
+
+$router->get('searchFriends/{csrfToken}/{firstResult}/{pattern}?', function ($csrfToken, $firstResult, $pattern = null) {
+    require_once 'Front Layer/start.php';
+
+    $clientApi = new \App\ApiController\ClientApiController();
+    $clientApi->getSearchFriends($db, $csrfToken, $firstResult, $pattern);
 });
 
 $router->get('/logout', function () {

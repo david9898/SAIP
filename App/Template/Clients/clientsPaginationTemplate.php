@@ -1,3 +1,6 @@
+<?php
+    /** @var $client \App\DTO\ClientDTO */
+?>
 <section>
 
     <div class="clients_navigation">
@@ -18,7 +21,7 @@
         </div>
     </div>
 
-    <div class="clients_pagination">
+    <div id="clients_list">
 
         <table class="table-fill">
             <thead>
@@ -33,17 +36,20 @@
             </tr>
             </thead>
             <tbody class="table-hover">
-                <tr>
-                    <td class="text-left">January</td>
-                    <td class="text-left">$ 50,000.00</td>
-                    <td class="text-left">$ 50,000.00</td>
-                    <td class="text-left">$ 50,000.00</td>
-                    <td class="text-left">$ 50,000.00</td>
-                    <td class="text-left">$ 50,000.00</td>
-                </tr>
+                <?php foreach ($data['clients'] as $client): ?>
+                    <tr>
+                        <td class="text-left"><?= $client->getFirstName() ?></td>
+                        <td class="text-left"><?= $client->getLastName() ?></td>
+                        <td class="text-left"><?= $client->getTown() ?></td>
+                        <td class="text-left"><?= $client->getStreet() ?></td>
+                        <td class="text-left"><?= $client->getEmail() ?></td>
+                        <td class="text-left"><?= $client->getAbonament() ?></td>
+                    </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
 
     </div>
+    <input type="hidden" value="<?= $data['csrf_token'] ?>" id="csrf_token">
 
 </section>

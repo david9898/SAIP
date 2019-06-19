@@ -8,8 +8,8 @@
     padding-top: 50px;
 }
 
-.clients_pagination {
-
+.clients_list {
+    margin: auto;
 }
 
 .search_clients {
@@ -42,7 +42,7 @@ div.table-title {
 /*** Table Styles **/
 
 .table-fill {
-    margin-left: 150px;
+    margin: auto;
     margin-top: 50px;
     background: white;
     border-radius:3px;
@@ -52,6 +52,7 @@ div.table-title {
     width: 100%;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
     animation: float 5s infinite;
+    margin-bottom: 60px;
 }
 
 th {
@@ -59,7 +60,7 @@ th {
     background:#1b1e24;
     border-bottom:4px solid #9ea7af;
     border-right: 1px solid #343a45;
-    font-size:23px;
+    font-size:16px;
     padding:24px;
     text-align:left;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -120,7 +121,7 @@ td {
     text-align:left;
     vertical-align:middle;
     font-weight:300;
-    font-size:18px;
+    font-size:14px;
     text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
     border-right: 1px solid #C1C3D1;
 }

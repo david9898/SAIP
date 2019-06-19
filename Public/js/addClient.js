@@ -1,4 +1,3 @@
-document.write("<base href='http://" + document.location.host + "' />");
 $(document).ready(() => {
     getStreets()
     addClient()
@@ -109,14 +108,15 @@ function addClient() {
             }
 
             $.ajax({
-                url: 'addClient',
+                url: baseUrl + 'addClient',
                 type: 'POST',
                 data: obj,
             }).then((res) => {
+                console.log(res)
                 let responce = JSON.parse(res)
 
                 if ( responce['status'] === 'success' ) {
-                    console.log('success')
+                    window.location.href = baseUrl + 'clients/1'
                 }else {
                     toastr.error(responce['description'])
                 }

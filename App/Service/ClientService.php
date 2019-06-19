@@ -71,6 +71,7 @@ class ClientService implements ClientServiceInterface
                 $isAdd = $clientRepo->addClient($client);
 
                 if ( $isAdd ) {
+                    $session->addFlashMessage('success', 'Успешно добавихте нов клиент');
                     return ['status' => 'success'];
                 }
             } else {

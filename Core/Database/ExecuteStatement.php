@@ -19,7 +19,7 @@ class ExecuteStatement implements ExecuteStatementInterface
         $this->stmt = $stmt;
     }
 
-    public function bindParam(string $name, $value, $pdoParam): ExecuteStatementInterface
+    public function bindParam(string $name, $value, $pdoParam, $count = null): ExecuteStatementInterface
     {
         $this->stmt->bindParam($name, $value, $pdoParam);
 

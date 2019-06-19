@@ -13,5 +13,5 @@ interface ExecuteStatementInterface
 {
     public function execute(): FetchStatementInterface;
 
-    public function bindParam(string $name, $value, $pdoParam): ExecuteStatementInterface;
+    public function bindParam(string $name, $value, $pdoParam, $count = null): ExecuteStatementInterface;
 }

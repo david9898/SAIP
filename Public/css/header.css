@@ -22,8 +22,9 @@ main {
     display: flex;
 }
 main aside {
-    background-color: #AA6E00;
+    background-color: #4FACFF;
     width: 20%;
+    color: white;
 }
 
 main aside ul {
@@ -36,19 +37,19 @@ main aside ul li {
     padding-left: 40px;
     padding-top: 17px;
     font-size: 22px;
-    color: black;
+    color: white;
     height: 60px;
     list-style-type: none;
 }
 
 main aside ul li a {
-    color: black;
+    color: white;
     text-decoration: none;
 }
 
 main aside ul li:hover {
     cursor: pointer;
-    background-color: #704800;
+    background-color: #3372AA;
 }
 
 main aside ul li a:hover {

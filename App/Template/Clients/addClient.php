@@ -7,7 +7,7 @@
  * @var $abonament \App\DTO\AbonamentDTO
  */
 ?>
-<section>
+<section id="client_basic">
 
     <form class="prevent_submit">
         <div class="form-style-5">
