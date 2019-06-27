@@ -10,14 +10,46 @@ body {
 }
 
 header {
+    display: flex;
+    justify-content: space-between;
     padding: 10px;
     background-color: #ff0000;
 }
+header div .admin_panel {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+}
 
-header span {
+header div .admin_panel a {
+    color: white;
+}
+
+header p {
     font-family: 'Lobster', cursive;
     font-size: 25px;
 }
+
+header .hamburger {
+    display: none;
+}
+
+header div .admin_button {
+    border: none;
+    padding: 10px;
+    font-family: 'Lobster', cursive;
+    font-size: 16px;
+}
+
+header div .admin_button:hover {
+    border: none;
+    padding: 10px;
+    background-color: #4FACFF;
+    font-family: 'Lobster', cursive;
+    font-size: 16px;
+    color: white;
+}
+
 main {
     display: flex;
 }
@@ -60,4 +92,19 @@ main aside ul li a:hover {
 main section{
     width: 80%;
     background-color: #C7C7C7;
+}
+
+@media only screen and (max-width: 600px) {
+    aside {
+        display: none;
+    }
+
+    header .hamburger {
+        cursor: pointer ;
+        display: flex;
+    }
+
+    section {
+        max-width: 100%;
+    }
 }

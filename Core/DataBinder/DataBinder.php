@@ -7,7 +7,7 @@ namespace Core\DataBinder;
 class DataBinder
 {
 
-    public function bindData($data, $class)
+    public static function bindData($data, $class)
     {
         $explodeData = [];
         foreach ($data as $key => $value) {

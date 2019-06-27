@@ -8,6 +8,7 @@ class AbonamentDTO
 {
     private $id;
     private $name;
+    private $price;
 
     /**
      * @return mixed
@@ -39,5 +40,21 @@ class AbonamentDTO
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param mixed $price
+     */
+    public function setPrice($price): void
+    {
+        $this->price = $price;
     }
 }

@@ -60,7 +60,7 @@ th {
     background:#1b1e24;
     border-bottom:4px solid #9ea7af;
     border-right: 1px solid #343a45;
-    font-size:16px;
+    font-size:21px;
     padding:24px;
     text-align:left;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -221,3 +221,4 @@ td.text-right {
         transform:translateY(0);
     }
 }
+

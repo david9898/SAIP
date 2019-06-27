@@ -28,4 +28,15 @@ class StaffRepository  implements StaffRepositoryInterface
                         ->current();
     }
 
+    public function addCustomer(StaffDTO $customer): bool
+    {
+        $sql = 'INSERT INTO staff (first_name, last_name, username, password, phone, role)
+                VALUES (?, ?, ?, ?, ?, ?)';
+
+        $this->db->prepare($sql)
+                ->execute([$customer->getFirstName(), $customer->getLastName(), $customer->getUsername(),
+                            $customer->getPassword(), $customer->getPhone(), $customer->getRole()]);
+
+        return true;
+    }
 }

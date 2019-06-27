@@ -24,16 +24,23 @@
     <body>
 
         <header>
-            <span>SAIP</span>
-            <span><a href="logout">Изход</a></span>
+            <p class="hamburger"><i class="fas fa-bars"></i></p>
+            <p class="logo">LINDA</p>
+            <div>
+                <button class="admin_button">Админ панел</button>
+                <ul class="admin_panel">
+                    <a href="addStaff">Добави персонал</a>
+                    <a href="logout">Изход</a>
+                </ul>
+            </div>
         </header>
 
         <main>
             <aside>
                 <ul>
-                    <li><i class="fab fa-audible"></i> Система</li>
-                    <li><i class="fas fa-users"></i> <a href="clients/1">Клиенти</a></li>
-                    <li><i class="fas fa-network-wired"></i> Мрежа</li>
+                    <a href="system"><li><i class="fab fa-audible"></i> Система</li></a>
+                    <a href="clients"><li><i class="fas fa-users"></i> Клиенти</li></a>
+                    <a href="network"><li><i class="fas fa-network-wired"></i> Мрежа</li></ul></a>
                 </ul>
             </aside>
 

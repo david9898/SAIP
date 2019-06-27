@@ -6,6 +6,7 @@ namespace App\ApiController;
 
 use App\Repository\ClientRepository;
 use App\Repository\NeighborhoodRepository;
+use App\Repository\PaymentRepository;
 use App\Repository\StreetRepository;
 use App\Repository\TownRepository;
 use App\Service\ClientService;
@@ -69,7 +70,9 @@ class ClientApiController extends AbstractController
             $clientRepo = new ClientRepository($db);
 
             if ( $pattern !== null ) {
-                $clients = $clientRepo->searchFriends($pattern, $firstResult);
+                $patterns = explode(' ', urldecode($pattern));
+
+                $clients = $clientRepo->searchFriends($patterns, $firstResult);
 
                 if ($clients !== null) {
                     $responce = [];
@@ -95,5 +98,20 @@ class ClientApiController extends AbstractController
         }else {
             return $this->jsonResponce(['status' => 'error', 'description' => 'Грешен токен']);
         }
+    }
+
+
+    public function addPayment($db)
+    {
+        $this->validateAccess(1);
+
+        $request       = new Request();
+        $clientRepo    = new ClientRepository($db);
+        $paymentRepo   = new PaymentRepository($db);
+        $clientService = new ClientService();
+
+        $responce = $clientService->addPayment($request, $paymentRepo, $clientRepo);
+
+        return $this->jsonResponce($responce);
     }
 }

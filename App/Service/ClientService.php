@@ -5,12 +5,15 @@ namespace App\Service;
 
 
 use App\DTO\ClientDTO;
+use App\DTO\PaymentDTO;
 use App\Repository\ClientRepositoryInterface;
 use App\Repository\NeighborhoodRepositoryInterface;
+use App\Repository\PaymentRepositoryInterface;
 use App\Repository\StreetRepositoryInterface;
 use App\Repository\TownRepositoryInterface;
 use Core\DataBinder\DataBinder;
 use Core\Exception\ValidationExeption;
+use Core\Request\Request;
 use Core\Session\Session;
 
 class ClientService implements ClientServiceInterface
@@ -25,10 +28,9 @@ class ClientService implements ClientServiceInterface
             $realCsrfToken = $session->get('csrf_token');
 
             if ( $post['csrf_token'] === $realCsrfToken ) {
-                $dataBinder = new DataBinder();
                 $clientData = new ClientDTO();
                 /** @var ClientDTO $client */
-                $client = $dataBinder->bindData($post, $clientData);
+                $client = DataBinder::bindData($post, $clientData);
 
                 $streetId = $streetRepo->getStreetByName($client->getStreet());
 
@@ -81,4 +83,115 @@ class ClientService implements ClientServiceInterface
             return ['status' => 'error', 'description' => $e->getMessage()];
         }
     }
+
+
+
+    public function getClients(ClientRepositoryInterface $repository): array
+    {
+        $time      = time();
+        $res       = [];
+        $generator = $repository->getClients();
+
+        foreach ($generator as $client) {
+            /** @var ClientDTO $client */
+            $diff = $client->getPaid() - $time;
+
+            if ( $diff < 0 ) {
+                $daysDiff = floor($diff / 86400);
+                $client->setPaid($daysDiff);
+                $res[] = $client;
+                continue;
+            }else {
+                $daysDiff = ceil($diff / 86400);
+                $client->setPaid($daysDiff);
+                $res[] = $client;
+                continue;
+            }
+        }
+
+        return $res;
+    }
+
+
+
+    public function addPayment(Request $request, PaymentRepositoryInterface $paymentRepo,
+                                ClientRepositoryInterface $clientRepo): array
+    {
+        $postArr = json_decode($request->getContent(), true);
+        $session = new Session();
+
+        if ($session->get('csrf_token') === $postArr['csrf_token']) {
+            $clientAbonamentPrice = $clientRepo->getClientAbonamentPrice($postArr['client'])->getSum();
+
+            for ($i = 0; $i < $postArr['bills']; $i++) {
+                $paymentDTO = new PaymentDTO();
+
+                /** @var PaymentDTO $payment */
+                $payment = DataBinder::bindData($postArr, $paymentDTO);
+
+                $lastPayment = $paymentRepo->getLastPayment($payment->getClient());
+
+                if ($lastPayment !== null) {
+                    $payment->setStartTime($lastPayment->getEndTime());
+
+                    $payment->setEndTime($lastPayment->getEndTime() + 2635200);
+                } else {
+                    $payment->setStartTime(time());
+
+                    $payment->setEndTime(time() + 2635200);
+                }
+
+                $payment->setSum($clientAbonamentPrice);
+                $payment->setOperator($session->get('userData')['id']);
+
+                $paymentRepo->addPayment($payment);
+            }
+
+            return ['status' => 'success'];
+        }else {
+            return ['status' => 'error', 'description' => 'Грешен токен'];
+        }
+    }
+
+    public function calculateBills($lastPayment, $lastTime): array
+    {
+        if ( $lastPayment !== null ) {
+            if ( $lastTime > time() ) {
+                $time = [
+                    'delay' => 'no',
+                    'paid'  => date('Y:m:d', $lastTime)
+                ];
+            }else {
+                $diffTime = time() - $lastTime;
+                $numBills    = ceil($diffTime / 2635200);
+
+                if ( (int)$numBills === 1 ) {
+                    $bills = [
+                        ['start' => date('Y:m:d', $lastTime), 'end' => date('Y:m:d', $lastTime + 2635200)]
+                    ];
+                }
+                else if ( (int)$numBills === 2 ) {
+                    $bills = [
+                        ['start' => date('Y:m:d', $lastTime), 'end' => date('Y:m:d', $lastTime + 2635200)],
+                        ['start' => date('Y:m:d', $lastTime + 2635200), 'end' => date('Y:m:d', $lastTime + 5270400)]
+                    ];
+                }else{
+                    $bills = [
+                        ['start' => date('Y:m:d', $lastTime), 'end' => date('Y:m:d', $lastTime + 2635200)],
+                        ['start' => date('Y:m:d', $lastTime + 2635200), 'end' => date('Y:m:d', $lastTime + 7905600)],
+                        ['start' => date('Y:m:d', $lastTime + 5270400), 'end' => date('Y:m:d', $lastTime + 5270400)]
+                    ];
+                }
+                $time = [
+                    'delay' => 'yes',
+                    'bills' => $bills
+                ];
+            }
+            return $time;
+        }else {
+            return ['delay' => 'none'];
+        }
+
+    }
+
 }

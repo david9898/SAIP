@@ -18,6 +18,8 @@ class ClientDTO extends Validator
     private $dateRegister;
     private $description;
     private $streetNumber;
+    private $paid;
+    private $sum;
 
     public function __construct()
     {
@@ -224,5 +226,37 @@ class ClientDTO extends Validator
         if ( $this->notEmpty($streetNumber) ) {
             $this->streetNumber = htmlspecialchars($streetNumber);
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaid()
+    {
+        return $this->paid;
+    }
+
+    /**
+     * @param mixed $paid
+     */
+    public function setPaid($paid): void
+    {
+        $this->paid = $paid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSum()
+    {
+        return $this->sum;
+    }
+
+    /**
+     * @param mixed $sum
+     */
+    public function setSum($sum): void
+    {
+        $this->sum = $sum;
     }
 }

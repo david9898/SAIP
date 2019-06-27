@@ -55,7 +55,7 @@ abstract class AbstractController
                 if ( $role !== null ) {
                     $userData = $session->get('userData');
 
-                    if ( $role = 'ROLE_CUSTOMER' ) {
+                    if ( $role === 'ROLE_CUSTOMER' ) {
                         if ( $userData['role'] === 'ROLE_CUSTOMER' || $userData['role'] === 'ROLE_ADMIN' ) {
                             return true;
                         }
@@ -74,7 +74,7 @@ abstract class AbstractController
             }
         }else {
             if ( $session->checkIfKeyExist('userData') ) {
-                $this->redirect('/clients/1');
+                $this->redirect('/clients');
             }else {
                 return true;
             }

@@ -31,7 +31,7 @@ class ClientRepository implements ClientRepositoryInterface
     public function getClients(): \Generator
     {
         $sql = 'SELECT abonaments.name as abonament, towns.name as town, streets.name as street, 
-                first_name as firstName, last_name as lastName, email 
+                first_name as firstName, last_name as lastName, paid, clients.id
                 FROM clients
                 JOIN abonaments ON abonaments.id = clients.abonament
                 JOIN towns ON towns.id = clients.town
@@ -47,7 +47,7 @@ class ClientRepository implements ClientRepositoryInterface
     public function getMoreClients($firstResult): ?\Generator
     {
         $sql = 'SELECT abonaments.name as abonament, streets.name as street, 
-                towns.name as town, email, first_name as firstName, last_name as lastName
+                towns.name as town, email, first_name as firstName, last_name as lastName, clients.id
                 FROM clients
                 JOIN abonaments ON abonaments.id = clients.abonament
                 JOIN towns ON towns.id = clients.town
@@ -61,29 +61,80 @@ class ClientRepository implements ClientRepositoryInterface
                         ->fetchAssoc();
     }
 
-    public function searchFriends($pattern, $firstResult): ?\Generator
+    public function searchFriends($patterns, $firstResult): ?\Generator
     {
         $sql = 'SELECT abonaments.name as abonament, streets.name as street, 
-                towns.name as town, email, first_name as firstName, last_name as lastName
+                towns.name as town, email, first_name as firstName, last_name as lastName, clients.id
+                FROM clients
+                JOIN abonaments ON abonaments.id = clients.abonament
+                JOIN towns ON towns.id = clients.town
+                JOIN streets ON streets.id = clients.street';
+
+        $sql = $sql . ' WHERE ';
+
+        for ($i=0;$i<count($patterns);$i++) {
+            if ( $i !== count($patterns) - 1 ) {
+                $sql = $sql . ' CONCAT(abonaments.name, towns.name, streets.name, clients.first_name, 
+                clients.last_name, clients.email) LIKE :pattern' . $i .' AND ';
+            }else {
+                $sql = $sql . ' CONCAT(abonaments.name, towns.name, streets.name, clients.first_name, 
+                clients.last_name, clients.email) LIKE :pattern' . $i . ' ';
+            }
+        }
+
+        $sql = $sql . ' LIMIT :firstResult, 20';
+
+        $stmt = $this->db->prepare($sql);
+        for ($i=0;$i<count($patterns);$i++) {
+            $stmt->bindParam('pattern' . $i, '%' . $patterns[$i] . '%', \PDO::PARAM_STR);
+        }
+        $stmt->bindParam('firstResult', (int)$firstResult, \PDO::PARAM_INT);
+        $resStmt = $stmt->execute();
+        return $resStmt->fetchAssoc();
+    }
+
+    public function getClient($id): ?ClientDTO
+    {
+        $sql = 'SELECT abonaments.name as abonament, abonaments.price as sum,
+                streets.name as street, towns.name as town, 
+                neighborhoods.name as neighborhood, email, first_name as firstName, 
+                last_name as lastName, phone, street_number as streetNumber
                 FROM clients
                 JOIN abonaments ON abonaments.id = clients.abonament
                 JOIN towns ON towns.id = clients.town
                 JOIN streets ON streets.id = clients.street
-                WHERE abonaments.name LIKE :pattern
-                OR streets.name LIKE :pattern
-                OR towns.name LIKE :pattern
-                OR clients.first_name LIKE :pattern
-                OR clients.last_name LIKE :pattern
-                OR clients.email LIKE :pattern
-                LIMIT :firstResult, 20';
-
-        $pattern = urldecode($pattern) . '%';
+                LEFT JOIN neighborhoods ON (neighborhoods.id = clients.neighborhood) 
+                WHERE clients.id = :id';
 
         return $this->db->prepare($sql)
-                        ->bindParam('pattern', $pattern, \PDO::PARAM_STR, 50)
-                        ->bindParam('firstResult', $firstResult, \PDO::PARAM_INT)
+                        ->bindParam('id', $id, \PDO::PARAM_INT)
                         ->execute()
-                        ->fetchAssoc();
+                        ->fetchObject(ClientDTO::class)
+                        ->current();
+
+    }
+
+    public function getAllClients(): \Generator
+    {
+        $sql = 'SELECT clients.id, paid, abonaments.price as sum FROM clients 
+                JOIN abonaments ON abonaments.id = clients.abonament';
+
+        return $this->db->prepare($sql)
+                        ->execute()
+                        ->fetchObject(ClientDTO::class);
+    }
+
+    public function getClientAbonamentPrice($clientId): ClientDTO
+    {
+        $sql = 'SELECT abonaments.price as sum FROM clients
+                JOIN abonaments ON abonaments.id = clients.abonament
+                WHERE clients.id = :clientId';
+
+        return $this->db->prepare($sql)
+                        ->bindParam('clientId', $clientId, \PDO::PARAM_INT)
+                        ->execute()
+                        ->fetchObject(ClientDTO::class)
+                        ->current();
     }
 
 }

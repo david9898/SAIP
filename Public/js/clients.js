@@ -4,10 +4,12 @@ $(document).ready(async () => {
     let clientTemplate = await $.get(baseUrl + 'Public/templatesHbs/clientTemplate.hbs')
     onScroll(clientTemplate)
     searchFriends(clientTemplate)
+    seeClient()
 })
 
+let isActiveEvent = true
+
 function onScroll(clientTemplate) {
-    let isActiveEvent = true
 
     window.addEventListener('scroll', function () {
         if ( isActiveEvent ) {
@@ -42,6 +44,7 @@ function onScroll(clientTemplate) {
                                 if (responce['clients'].length === 20) {
                                     isActiveEvent = true
                                 }
+                                seeClient()
                             }
                         }else {
                             toastr.error(responce['description'])
@@ -67,6 +70,8 @@ function searchFriends(clientTemplate) {
     let input = document.getElementById('inlineFormInputGroup')
 
     input.addEventListener('input', function (e) {
+        isActiveEvent   = true
+        sessionStorage.setItem('listClients', 20)
         let pattern     = e.target.value
         let csrfToken   = document.getElementById('csrf_token').value
         let firstResult = 0
@@ -77,13 +82,20 @@ function searchFriends(clientTemplate) {
                 let responce = JSON.parse(xhr.responseText)
 
                 if ( responce['status'] === 'success' ) {
-                    $('.table-hover').empty()
-                    for ( let client of responce['clients'] ) {
-                        console.log(client)
-                        let template = Handlebars.compile(clientTemplate)
-                        let html     = template(client)
-                        $('.table-hover').append(html)
+                    if ( responce['clients'] !== undefined ) {
+                        $('.table-hover').empty()
+                        for (let client of responce['clients']) {
+                            let template = Handlebars.compile(clientTemplate)
+                            let html = template(client)
+                            $('.table-hover').append(html)
+                        }
+                        seeClient()
+                    }else {
+                        $('.table-hover').empty()
+                        $('.table-hover').append('<div>Няма намерени резултати</div>')
                     }
+                }else {
+                    toastr.error(responce['description'])
                 }
             }
         }
@@ -95,5 +107,11 @@ function searchFriends(clientTemplate) {
         }
         xhr.send(null)
 
+    })
+}
+
+function seeClient() {
+    $('.see_client').on('click', function () {
+        window.location.href = baseUrl + 'client/' + $(this).attr('client')
     })
 }

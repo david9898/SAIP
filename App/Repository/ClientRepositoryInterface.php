@@ -15,4 +15,11 @@ interface ClientRepositoryInterface
     public function getMoreClients($firstResult): ?\Generator;
 
     public function searchFriends($pattern, $firstResult): ?\Generator;
+
+    public function getClient($id): ?ClientDTO;
+
+    public function getAllClients(): \Generator;
+
+    public function getClientAbonamentPrice($clientId): ClientDTO;
+
 }

@@ -32,4 +32,11 @@ class Request implements RequestInterface
 
         return false;
     }
+
+    public function getContent(): string
+    {
+        $arr = array_keys($this->post);
+
+        return $arr[0];
+    }
 }

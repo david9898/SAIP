@@ -11,4 +11,6 @@ interface RequestInterface
     public function getGET(): array;
 
     public function isSubmit(string $buttonName): bool;
+
+    public function getContent(): string;
 }

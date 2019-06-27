@@ -30,19 +30,19 @@
                 <th class="text-left">Фамилия</th>
                 <th class="text-left">Град</th>
                 <th class="text-left">Улица</th>
-                <th class="text-left">Имейл</th>
+                <th class="text-left">Платежност</th>
                 <th class="text-left">Абонамент</th>
 
             </tr>
             </thead>
             <tbody class="table-hover">
                 <?php foreach ($data['clients'] as $client): ?>
-                    <tr>
+                    <tr class="see_client" client="<?= $client->getId() ?>">
                         <td class="text-left"><?= $client->getFirstName() ?></td>
                         <td class="text-left"><?= $client->getLastName() ?></td>
                         <td class="text-left"><?= $client->getTown() ?></td>
                         <td class="text-left"><?= $client->getStreet() ?></td>
-                        <td class="text-left"><?= $client->getEmail() ?></td>
+                        <td class="text-left"><?= $client->getPaid() ?></td>
                         <td class="text-left"><?= $client->getAbonament() ?></td>
                     </tr>
                 <?php endforeach; ?>

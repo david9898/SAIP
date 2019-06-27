@@ -18,7 +18,7 @@ function processInput(){
 }
 
 
-$router->get('/clients/1', function () {
+$router->get('/clients', function () {
     require_once 'Front Layer/start.php';
 
     $clientController = new \App\Controller\ClientController();
@@ -71,6 +71,46 @@ $router->get('/logout', function () {
    $staffController = new \App\Controller\StaffController();
    $staffController->logout();
 });
+
+$router->any('/addStaff', function () {
+    require_once 'Front Layer/start.php';
+
+    $staffController = new \App\Controller\StaffController();
+    $staffController->registerStaff($db);
+});
+
+$router->get('/client/{id}', function ($id) {
+   require_once 'Front Layer/start.php';
+
+   $clientController = new \App\Controller\ClientController();
+   $clientController->seeClient($db, $id);
+});
+
+$router->get('/updateBills', function () {
+   require_once 'BillSearchCommand.php';
+});
+
+$router->post('/addPayment', function () {
+    require_once 'Front Layer/start.php';
+
+    $clientApiController = new \App\ApiController\ClientApiController();
+    $clientApiController->addPayment($db);
+});
+
 $dispatcher =  new \Phroute\Phroute\Dispatcher($router->getData());
 
-echo $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], processInput());
+try {
+    echo $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], processInput());
+}catch (\Phroute\Phroute\Exception\HttpRouteNotFoundException $e) {
+    require_once 'App/Template/Exeptions/PageNotFound.php';
+}catch (\Core\Exception\SessionException $exception) {
+    require_once 'App/Template/Exeptions/SomethingWrong.php';
+}catch (\Core\Exception\AccessDenyException $exception) {
+    require_once 'App/Template/Exeptions/AccessDeny.php';
+}catch (\Core\Exception\ValidationExeption $exception) {
+    require_once 'App/Template/Exeptions/SomethingWrong.php';
+}catch (PDOException $exception) {
+    require_once 'App/Template/Exeptions/SomethingWrong.php';
+}catch (Exception $exception) {
+    require_once 'App/Template/Exeptions/SomethingWrong.php';
+}

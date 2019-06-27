@@ -24,5 +24,4 @@ class PrepareStatement implements PrepareStatementInterface
 
             return new ExecuteStatement($stmt);
     }
-
 }

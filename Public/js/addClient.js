@@ -116,7 +116,7 @@ function addClient() {
                 let responce = JSON.parse(res)
 
                 if ( responce['status'] === 'success' ) {
-                    window.location.href = baseUrl + 'clients/1'
+                    window.location.href = baseUrl + 'clients'
                 }else {
                     toastr.error(responce['description'])
                 }

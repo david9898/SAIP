@@ -42,7 +42,7 @@
 
                         <input type="text" class="street_number" placeholder="Номер улица *">
 
-                        <input type="text" class="neighborhood" placeholder="Квартал">
+                        <input type="text" class="neighborhood" placeholder="Квартал *">
 
                         <textarea placeholder="Описание на адреса" class="description"></textarea>
                     </div>
