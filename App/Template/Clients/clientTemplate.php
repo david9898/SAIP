@@ -1,4 +1,4 @@
-<?php /** @var \App\DTO\ClientDTO $client */ $client = $data['client']; ?>
+<?php /** @var \App\DTO\ClientDTO $client */ $client = $data['client'];?>
 <section>
 
     <div class="client_info">
@@ -26,7 +26,7 @@
                         <div>
                             <legend><span class="number">1</span> Направи плащане на клиента </legend>
 
-                            <div>
+                            <div class="bills_form">
                                 <h4>Сметки</h4>
                                 <?php if ( $data['bills']['delay'] !== 'none' ): ?>
                                     <?php if ( $data['bills']['delay'] === 'no' ): ?>
@@ -41,14 +41,14 @@
                                     <p>Няма досегашни плащания</p>
                                 <?php endif; ?>
                                 <h6>Изберете колко сметки иска да плати клиента:</h6>
-                                <input type="number" id="bills" price="<?= $client->getSum() ?>">
+                                <input type="number" id="bills" price="<?= $client->getSum() ?>" lastTime="<?= $data['bills']['lastTime'] ?>">
 
                                 <p>Цена: <span class="final_price_bill"><?= $client->getSum() ?></span>лв.</p>
                             </div>
                         </div>
                     </fieldset>
                     <input type="hidden" class="csrf_token" id="csrf_token" name="csrf_token" value="<?= $data['csrf_token'] ?>">
-                    <input type="submit" id="addPayment" name="add_staff" value="Добави" />
+                    <input type="submit" id="addPayment" name="add_payment" value="Добави" />
                 </form>
             </div>
         </form>

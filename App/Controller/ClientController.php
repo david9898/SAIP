@@ -89,6 +89,7 @@ class ClientController extends AbstractController
                 'Public/css/addStaff.css'
             ],
             'js'         => [
+                'node_modules/moment/min/moment-with-locales.min.js',
                 'Public/js/client.js'
             ],
             'client'     => $client,

@@ -42,7 +42,11 @@
                         <td class="text-left"><?= $client->getLastName() ?></td>
                         <td class="text-left"><?= $client->getTown() ?></td>
                         <td class="text-left"><?= $client->getStreet() ?></td>
-                        <td class="text-left"><?= $client->getPaid() ?></td>
+                        <?php if ( $client->getPaid() !== null ): ?>
+                            <td class="text-left"><?= $client->getPaid() ?></td>
+                        <?php else: ?>
+                            <td class="text-left">-</td>
+                        <?php endif; ?>
                         <td class="text-left"><?= $client->getAbonament() ?></td>
                     </tr>
                 <?php endforeach; ?>

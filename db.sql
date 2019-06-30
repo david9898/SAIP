@@ -20,16 +20,43 @@ USE `network_controll`;
 CREATE TABLE IF NOT EXISTS `abonaments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(150) NOT NULL,
+  `price` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- Дъмп данни за таблица network_controll.abonaments: ~2 rows (approximately)
 /*!40000 ALTER TABLE `abonaments` DISABLE KEYS */;
-REPLACE INTO `abonaments` (`id`, `name`) VALUES
-	(1, 'Обикновен'),
-	(2, 'Премиум');
+REPLACE INTO `abonaments` (`id`, `name`, `price`) VALUES
+	(1, 'Обикновен', 25),
+	(2, 'Премиум', 40);
 /*!40000 ALTER TABLE `abonaments` ENABLE KEYS */;
+
+-- Дъмп структура за таблица network_controll.bills
+CREATE TABLE IF NOT EXISTS `bills` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `start` int(11) NOT NULL,
+  `end` int(11) NOT NULL,
+  `sum` int(11) NOT NULL,
+  `client` int(11) NOT NULL,
+  `time` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_bills_clients` (`client`),
+  CONSTRAINT `FK_bills_clients` FOREIGN KEY (`client`) REFERENCES `clients` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
+
+-- Дъмп данни за таблица network_controll.bills: ~8 rows (approximately)
+/*!40000 ALTER TABLE `bills` DISABLE KEYS */;
+REPLACE INTO `bills` (`id`, `start`, `end`, `sum`, `client`, `time`) VALUES
+	(49, 1561302126, 1563894126, 25, 22, 1561364166),
+	(50, 1561302126, 1563894126, 40, 16, 1561364166),
+	(51, 1561302126, 1563894126, 40, 18, 1561364166),
+	(52, 1561302126, 1563894126, 40, 34, 1561364166),
+	(53, 1561302126, 1563894126, 40, 44, 1561364166),
+	(54, 1561302126, 1563894126, 40, 49, 1561364166),
+	(55, 1561302126, 1563894126, 40, 55, 1561364166),
+	(56, 1561299774, 1563891774, 40, 56, 1561364166);
+/*!40000 ALTER TABLE `bills` ENABLE KEYS */;
 
 -- Дъмп структура за таблица network_controll.clients
 CREATE TABLE IF NOT EXISTS `clients` (
@@ -55,9 +82,9 @@ CREATE TABLE IF NOT EXISTS `clients` (
   CONSTRAINT `FK_clients_neighborhood` FOREIGN KEY (`neighborhood`) REFERENCES `neighborhoods` (`id`),
   CONSTRAINT `FK_routers_streets` FOREIGN KEY (`street`) REFERENCES `streets` (`id`),
   CONSTRAINT `FK_routers_towns` FOREIGN KEY (`town`) REFERENCES `towns` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8;
 
--- Дъмп данни за таблица network_controll.clients: ~21 rows (approximately)
+-- Дъмп данни за таблица network_controll.clients: ~45 rows (approximately)
 /*!40000 ALTER TABLE `clients` DISABLE KEYS */;
 REPLACE INTO `clients` (`id`, `town`, `abonament`, `first_name`, `neighborhood`, `last_name`, `phone`, `email`, `street`, `street_number`, `date_register`, `description`) VALUES
 	(10, 1, 2, 'David', NULL, 'Ivanov', '89165', 'david_786@abv.bg', 78, 0, 1560526110, ''),
@@ -100,7 +127,11 @@ REPLACE INTO `clients` (`id`, `town`, `abonament`, `first_name`, `neighborhood`,
 	(52, 3, 2, 'Kilotka', NULL, 'Kilotova', '85442321', 'kilota@abv.bg', 1050, 0, 1560874396, ''),
 	(53, 4, 2, 'Цветка', NULL, 'Цветкова', '74153', 'cvetka@abv.bg', 1270, 0, 1560874430, ''),
 	(54, 1, 2, 'Djoana', NULL, 'Lozeva', '966323', 'djoana@abv.bg', 51, 0, 1560874478, ''),
-	(55, 4, 2, 'Hristo', NULL, 'Hristov', '2356564', 'hristo@abv.bg', 1300, 0, 1560874953, '');
+	(55, 4, 2, 'Hristo', NULL, 'Hristov', '2356564', 'hristo@abv.bg', 1300, 0, 1560874953, ''),
+	(56, 6, 2, 'Вили', 41, 'Вилили', '541351535', 'vili@abv.bg', 1300, 0, 1560955083, ''),
+	(57, 3, 1, 'Мона', NULL, 'Монова', '8945615', 'mona@abv.bg', 1021, 0, 1561462677, ''),
+	(58, 3, 2, 'Румен', NULL, 'Руменов', '998465', 'rumen@abv.bg', 1027, 0, 1561462790, ''),
+	(59, 3, 2, 'Джо', NULL, 'Донев', '4186551', 'joa@abv.bg', 82, 0, 1561644935, '');
 /*!40000 ALTER TABLE `clients` ENABLE KEYS */;
 
 -- Дъмп структура за таблица network_controll.neighborhoods
@@ -157,6 +188,53 @@ REPLACE INTO `neighborhoods` (`id`, `name`) VALUES
 	(42, 'кв. Шияковци'),
 	(43, 'кв. Маслово');
 /*!40000 ALTER TABLE `neighborhoods` ENABLE KEYS */;
+
+-- Дъмп структура за таблица network_controll.payments
+CREATE TABLE IF NOT EXISTS `payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `time` int(11) NOT NULL,
+  `start_time` int(11) NOT NULL,
+  `end_time` int(11) NOT NULL,
+  `sum` int(11) NOT NULL,
+  `operator` int(11) NOT NULL,
+  `client` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_payments_staff` (`operator`),
+  KEY `FK_payments_clients` (`client`),
+  CONSTRAINT `FK_payments_clients` FOREIGN KEY (`client`) REFERENCES `clients` (`id`),
+  CONSTRAINT `FK_payments_staff` FOREIGN KEY (`operator`) REFERENCES `staff` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
+
+-- Дъмп данни за таблица network_controll.payments: ~17 rows (approximately)
+/*!40000 ALTER TABLE `payments` DISABLE KEYS */;
+REPLACE INTO `payments` (`id`, `time`, `start_time`, `end_time`, `sum`, `operator`, `client`) VALUES
+	(1, 1561499886, 1561499886, 1564135086, 25, 4, 57),
+	(2, 1561499886, 1564135086, 1566770286, 25, 4, 57),
+	(3, 1561499886, 1566770286, 1569405486, 25, 4, 57),
+	(4, 1561499887, 1569405486, 1572040686, 25, 4, 57),
+	(5, 1561499887, 1572040686, 1574675886, 25, 4, 57),
+	(6, 1561499887, 1574675886, 1577311086, 25, 4, 57),
+	(8, 1561546116, 1561546116, 1564181316, 40, 4, 58),
+	(9, 1561546116, 1564181316, 1566816516, 40, 4, 58),
+	(10, 1561566137, 1561566137, 1564201337, 40, 4, 10),
+	(11, 1561566137, 1564201337, 1566836537, 40, 4, 10),
+	(12, 1561566475, 1561566475, 1564201675, 40, 4, 55),
+	(13, 1561566475, 1564201675, 1556296502, 40, 4, 55),
+	(14, 1561642384, 1561642384, 1551642404, 40, 4, 54),
+	(15, 1561642721, 1551642404, 1556372321, 40, 4, 54),
+	(20, 1561643483, 1556372321, 1559007521, 40, 4, 54),
+	(21, 1561643483, 1559007521, 1561642721, 40, 4, 54),
+	(22, 1561644944, 1561644944, 1551822446, 40, 1, 59),
+	(23, 1561812839, 1561812839, 1564448039, 40, 1, 53),
+	(24, 1561812904, 1561812904, 1564448104, 25, 1, 48),
+	(25, 1561812910, 1564448104, 1567083304, 25, 1, 48),
+	(26, 1561822644, 1551822446, 1556552244, 40, 1, 59),
+	(27, 1561822644, 1556552244, 1559187444, 40, 1, 59),
+	(28, 1561822645, 1559187444, 1561822644, 40, 1, 59),
+	(30, 1561822823, 1561822644, 1564457844, 40, 1, 59),
+	(31, 1561822823, 1564457844, 1567093044, 40, 1, 59),
+	(32, 1561896188, 1561896188, 1564531388, 40, 1, 52);
+/*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 
 -- Дъмп структура за таблица network_controll.relations_towns_neighborhoods
 CREATE TABLE IF NOT EXISTS `relations_towns_neighborhoods` (
@@ -1639,12 +1717,15 @@ CREATE TABLE IF NOT EXISTS `staff` (
   PRIMARY KEY (`id`),
   KEY `FK_staff_roles` (`role`),
   CONSTRAINT `FK_staff_roles` FOREIGN KEY (`role`) REFERENCES `roles` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
--- Дъмп данни за таблица network_controll.staff: ~0 rows (approximately)
+-- Дъмп данни за таблица network_controll.staff: ~4 rows (approximately)
 /*!40000 ALTER TABLE `staff` DISABLE KEYS */;
 REPLACE INTO `staff` (`id`, `first_name`, `username`, `last_name`, `phone`, `password`, `role`) VALUES
-	(1, 'David', 'david_99', 'Ivanov', '048965', '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 2);
+	(1, 'David', 'david_99', 'Ivanov', '048965', '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 2),
+	(2, 'Pesho', 'Peshkata', 'Peshev', '1535351', '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 1),
+	(3, 'Gosho', 'Gosheto', 'Goshev', '894651', '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 1),
+	(4, 'Lora', 'Lorcheto', 'Loraaa', '5312', '3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2', 1);
 /*!40000 ALTER TABLE `staff` ENABLE KEYS */;
 
 -- Дъмп структура за таблица network_controll.streets

@@ -31,11 +31,13 @@ class ClientRepository implements ClientRepositoryInterface
     public function getClients(): \Generator
     {
         $sql = 'SELECT abonaments.name as abonament, towns.name as town, streets.name as street, 
-                first_name as firstName, last_name as lastName, paid, clients.id
+                first_name as firstName, last_name as lastName, payments.end_time as paid, clients.id
                 FROM clients
                 JOIN abonaments ON abonaments.id = clients.abonament
                 JOIN towns ON towns.id = clients.town
                 JOIN streets ON streets.id = clients.street
+                LEFT JOIN payments ON payments.id = 
+                (SELECT id FROM payments WHERE `client` = clients.id ORDER BY id DESC LIMIT 1)
                 ORDER BY clients.id DESC
                 LIMIT 20';
 

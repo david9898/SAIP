@@ -94,6 +94,12 @@ class ClientService implements ClientServiceInterface
 
         foreach ($generator as $client) {
             /** @var ClientDTO $client */
+
+            if ( $client->getPaid() === null ) {
+                $res[] = $client;
+                continue;
+            }
+
             $diff = $client->getPaid() - $time;
 
             if ( $diff < 0 ) {
@@ -132,9 +138,17 @@ class ClientService implements ClientServiceInterface
                 $lastPayment = $paymentRepo->getLastPayment($payment->getClient());
 
                 if ($lastPayment !== null) {
-                    $payment->setStartTime($lastPayment->getEndTime());
+                    $lastPayment = $lastPayment->getEndTime();
 
-                    $payment->setEndTime($lastPayment->getEndTime() + 2635200);
+                    if ( (time() - $lastPayment) > 7905600 ) {
+                        $endTime = $lastPayment + (time() - ($lastPayment + 7905600));
+                        $payment->setStartTime($lastPayment);
+                        $payment->setEndTime($endTime + 2635200);
+                    }else {
+                        $payment->setStartTime($lastPayment);
+                        $payment->setEndTime($lastPayment + 2635200);
+                    }
+
                 } else {
                     $payment->setStartTime(time());
 
@@ -158,8 +172,9 @@ class ClientService implements ClientServiceInterface
         if ( $lastPayment !== null ) {
             if ( $lastTime > time() ) {
                 $time = [
-                    'delay' => 'no',
-                    'paid'  => date('Y:m:d', $lastTime)
+                    'delay'    => 'no',
+                    'paid'     => date('Y:m:d', $lastTime),
+                    'lastTime' => $lastTime
                 ];
             }else {
                 $diffTime = time() - $lastTime;
@@ -178,18 +193,22 @@ class ClientService implements ClientServiceInterface
                 }else{
                     $bills = [
                         ['start' => date('Y:m:d', $lastTime), 'end' => date('Y:m:d', $lastTime + 2635200)],
-                        ['start' => date('Y:m:d', $lastTime + 2635200), 'end' => date('Y:m:d', $lastTime + 7905600)],
-                        ['start' => date('Y:m:d', $lastTime + 5270400), 'end' => date('Y:m:d', $lastTime + 5270400)]
+                        ['start' => date('Y:m:d', $lastTime + 2635200), 'end' => date('Y:m:d', $lastTime + 5270400)],
+                        ['start' => date('Y:m:d', $lastTime + 5270400), 'end' => date('Y:m:d', $lastTime + 7905600)]
                     ];
                 }
                 $time = [
-                    'delay' => 'yes',
-                    'bills' => $bills
+                    'delay'    => 'yes',
+                    'bills'    => $bills,
+                    'lastTime' => $lastTime
                 ];
             }
             return $time;
         }else {
-            return ['delay' => 'none'];
+            return [
+                'delay'    => 'none',
+                'lastTime' => 'none'
+            ];
         }
 
     }

@@ -6,7 +6,6 @@ namespace App\Service;
 use App\DTO\StaffDTO;
 use App\Repository\StaffRepositoryInterface;
 use Core\DataBinder\DataBinder;
-use Core\Exception\ValidationExeption;
 use Core\Session\Session;
 
 class StaffService implements StaffServiceInterface
@@ -19,14 +18,14 @@ class StaffService implements StaffServiceInterface
         /** @var StaffDTO $customer */
         $staff   = $staffRepo->getCustomer($post['username']);
 
-        if ( $customer === null ) {
+        if ( $staff === null ) {
             $session->addFlashMessage('error', 'Грешно потребителско име');
             return false;
         }
 
         $pass = hash('sha512', $post['password']);
 
-        if ( $pass === $customer->getPassword() ) {
+        if ( $pass === $staff->getPassword() ) {
             $session->addFlashMessage('success', 'Добре дошли');
             $userData = [
                 'id'       => $staff->getId(),
