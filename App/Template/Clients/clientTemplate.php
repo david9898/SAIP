@@ -1,4 +1,4 @@
-<?php /** @var \App\DTO\ClientDTO $client */ $client = $data['client'];?>
+<?php /** @var \App\DTO\ClientDTO $client */ $client = $data['client']; ?>
 <section>
 
     <div class="client_info">
@@ -24,7 +24,7 @@
                 <form class="prevent_submit" method="POST">
                     <fieldset class="second_form_fieldset">
                         <div>
-                            <legend><span class="number">1</span> Направи плащане на клиента </legend>
+<!--                            <legend>Направи плащане на клиента </legend>-->
 
                             <div class="bills_form">
                                 <h4>Сметки</h4>
@@ -32,18 +32,47 @@
                                     <?php if ( $data['bills']['delay'] === 'no' ): ?>
                                         <p>Платил до <?= $data['bills']['paid'] ?></p>
                                     <?php else: ?>
-                                        <?php foreach ($data['bills']['bills'] as $item): ?>
-                                            <p>start: <?= $item['start'] ?> ::::::: end: <?= $item['end'] ?></p>
-                                        <?php endforeach; ?>
+                                        <table class="bills_table">
+                                            <thead>
+                                                <tr>
+                                                    <th>От</th>
+                                                    <th>До</th>
+                                                    <th>Цена</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php for ($i = 0;$i < count($data['bills']['bills']); $i++): ?>
+                                                    <?php if ( $i === count($data['bills']['bills']) - 1 ): ?>
+                                                        <tr class="active">
+                                                            <td class="start_payment"><?= $data['bills']['bills'][$i]['start'] ?></td>
+                                                            <td class="end_payment last_bill_to" last_bill_to="<?= $data['bills']['bills'][$i]['end'] ?>"><?= $data['bills']['bills'][$i]['end'] ?></td>
+                                                            <td><?= $client->getSum() ?>лв.</td>
+                                                        </tr>
+                                                    <?php else: ?>
+                                                        <tr class="active">
+                                                            <td class="start_payment"><?= $data['bills']['bills'][$i]['start'] ?></td>
+                                                            <td class="end_payment"><?= $data['bills']['bills'][$i]['end'] ?></td>
+                                                            <td><?= $client->getSum() ?>лв.</td>
+                                                        </tr>
+                                                    <?php endif; ?>
+                                                <?php endfor; ?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3">Цена: <span class="final_price_bill"><?= count($data['bills']['bills']) * $client->getSum() ?></span>лв.</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
                                     <?php endif; ?>
 
                                     <?php else: ?>
                                     <p>Няма досегашни плащания</p>
                                 <?php endif; ?>
-                                <h6>Изберете колко сметки иска да плати клиента:</h6>
-                                <input type="number" id="bills" price="<?= $client->getSum() ?>" lastTime="<?= $data['bills']['lastTime'] ?>">
+                                <button class="add_bill_button">Добави сметка</button>
+<!--                                <h6>Изберете колко сметки иска да плати клиента:</h6>-->
+                                <p>Цена: <span class="final_price_bill"><?= count($data['bills']['bills']) * $client->getSum() ?></span>лв.</p>
+                                <input type="number" id="bills" price="<?= $client->getSum() ?>" lastTime="<?= $data['bills']['lastTime'] ?>" value="<?= count($data['bills']['bills']) ?>">
 
-                                <p>Цена: <span class="final_price_bill"><?= $client->getSum() ?></span>лв.</p>
                             </div>
                         </div>
                     </fieldset>

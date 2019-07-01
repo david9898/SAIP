@@ -182,19 +182,19 @@ class ClientService implements ClientServiceInterface
 
                 if ( (int)$numBills === 1 ) {
                     $bills = [
-                        ['start' => date('Y:m:d', $lastTime), 'end' => date('Y:m:d', $lastTime + 2635200)]
+                        ['start' => $lastTime, 'end' => $lastTime + 2635200]
                     ];
                 }
                 else if ( (int)$numBills === 2 ) {
                     $bills = [
-                        ['start' => date('Y:m:d', $lastTime), 'end' => date('Y:m:d', $lastTime + 2635200)],
-                        ['start' => date('Y:m:d', $lastTime + 2635200), 'end' => date('Y:m:d', $lastTime + 5270400)]
+                        ['start' => $lastTime, 'end' => $lastTime + 2635200],
+                        ['start' => $lastTime + 2635200, 'end' => $lastTime + 5270400]
                     ];
                 }else{
                     $bills = [
-                        ['start' => date('Y:m:d', $lastTime), 'end' => date('Y:m:d', $lastTime + 2635200)],
-                        ['start' => date('Y:m:d', $lastTime + 2635200), 'end' => date('Y:m:d', $lastTime + 5270400)],
-                        ['start' => date('Y:m:d', $lastTime + 5270400), 'end' => date('Y:m:d', $lastTime + 7905600)]
+                        ['start' => $lastTime, 'end' => $lastTime + 2635200],
+                        ['start' => $lastTime + 2635200, 'end' => $lastTime + 5270400],
+                        ['start' => $lastTime + 5270400, 'end' => $lastTime + 7905600]
                     ];
                 }
                 $time = [

@@ -86,10 +86,12 @@ class ClientController extends AbstractController
         $this->render('Clients/clientTemplate.php', [
             'css'        => [
                 'Public/css/header.css',
-                'Public/css/addStaff.css'
+                'Public/css/addStaff.css',
+                'Public/css/client.css'
             ],
             'js'         => [
                 'node_modules/moment/min/moment-with-locales.min.js',
+                'node_modules/handlebars/dist/handlebars.min.js',
                 'Public/js/client.js'
             ],
             'client'     => $client,

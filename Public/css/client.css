@@ -1,0 +1,70 @@
+.add_payment table {
+    border-bottom: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    margin-bottom: 50px;
+}
+
+.add_payment table tr:hover {
+    cursor: pointer;
+}
+
+.add_payment tfoot tr td {
+    border-top: none;
+}
+
+.add_payment thead {
+    color: black;
+    text-align: center;
+}
+
+.add_payment thead th {
+    padding: 7px;
+    width: 170px;
+    font-size: 18px;
+}
+
+.add_payment td {
+    text-align: center;
+    padding: 10px 0px;
+
+}
+
+.bills_form h4 {
+    padding: 15px 0;
+    text-align: center;
+}
+
+.add_payment div  legend {
+    text-align: center;
+    background-color: #FF0000;
+    color: white;
+    font-size: 24px;
+}
+
+.active {
+    background-color: #00AA00;
+    color: white;
+}
+
+.add_payment table {
+    border-collapse: collapse;
+}
+.add_payment table td, table th {
+    border: 1px solid black;
+}
+.add_payment table tr:first-child th {
+    border-top: 0;
+}
+.add_payment table tr:last-child td {
+    border-bottom: 0;
+}
+.add_payment table tr td:first-child,
+.add_payment table tr th:first-child {
+    border-left: 0;
+}
+.add_payment table tr td:last-child,
+.add_payment table tr th:last-child {
+    border-right: 0;
+}
