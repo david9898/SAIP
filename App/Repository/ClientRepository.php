@@ -98,7 +98,7 @@ class ClientRepository implements ClientRepositoryInterface
     public function getClient($id): ?ClientDTO
     {
         $sql = 'SELECT abonaments.name as abonament, abonaments.price as sum,
-                streets.name as street, towns.name as town, 
+                streets.name as street, towns.name as town, date_register as register,
                 neighborhoods.name as neighborhood, email, first_name as firstName, 
                 last_name as lastName, phone, street_number as streetNumber
                 FROM clients

@@ -105,3 +105,18 @@ section {
 {
     background: #AA0000;
 }
+#addPayment {
+    position: relative;
+    display: block;
+    padding: 19px 39px 18px 39px;
+    color: #FFF;
+    margin: 0 auto;
+    background: #FF0000;
+    font-size: 18px;
+    text-align: center;
+    font-style: normal;
+    width: 100%;
+    border: 1px solid #AA0000;
+    border-width: 1px 1px 3px;
+    margin-bottom: 10px;
+}

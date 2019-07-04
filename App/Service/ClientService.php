@@ -173,8 +173,9 @@ class ClientService implements ClientServiceInterface
             if ( $lastTime > time() ) {
                 $time = [
                     'delay'    => 'no',
-                    'paid'     => date('Y:m:d', $lastTime),
-                    'lastTime' => $lastTime
+                    'paid'     => $lastTime,
+                    'lastTime' => $lastTime,
+                    'bills'    => []
                 ];
             }else {
                 $diffTime = time() - $lastTime;
@@ -207,7 +208,8 @@ class ClientService implements ClientServiceInterface
         }else {
             return [
                 'delay'    => 'none',
-                'lastTime' => 'none'
+                'lastTime' => time(),
+                'bills'    => []
             ];
         }
 

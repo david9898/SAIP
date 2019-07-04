@@ -10,8 +10,13 @@
           <option name="port" value="2022" />
         </fileTransfer>
       </webServer>
-      <webServer id="e24a4f13-fc23-4893-9a7c-b23c1be9335b" name="web_debugging" url="http://localhost:8081">
-        <fileTransfer port="0" accessType="LOCAL" />
+      <webServer id="8721b4e7-a8fe-48b4-a1b8-4094b2d27400" name="linda" url="http://linda.itn.bg">
+        <fileTransfer host="linda.itn.bg" port="2117" rootFolder="/linda/">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="2117" />
+        </fileTransfer>
       </webServer>
     </option>
   </component>

@@ -20,6 +20,7 @@ class ClientDTO extends Validator
     private $streetNumber;
     private $paid;
     private $sum;
+    private $register;
 
     public function __construct()
     {
@@ -258,5 +259,21 @@ class ClientDTO extends Validator
     public function setSum($sum): void
     {
         $this->sum = $sum;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRegister()
+    {
+        return $this->register;
+    }
+
+    /**
+     * @param mixed $register
+     */
+    public function setRegister($register): void
+    {
+        $this->register = $register;
     }
 }

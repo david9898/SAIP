@@ -1,45 +1,62 @@
 window.onload = function () {
     moment.locale('bg')
-    chooseBills()
     addNextPayment()
     addPayment()
     makePaymentsToDates()
     chooseBill()
+    billTo()
+    updateStartData()
 }
 
-function chooseBills() {
-        $('#bills').on('input', function () {
+function chooseBills(bills) {
+        let price      = document.getElementById('bills').getAttribute('price')
+        let lastTime   = document.getElementById('bills').getAttribute('lastTime')
+        let finalPrice = price * Number(bills)
 
-            let price      = document.getElementById('bills').getAttribute('price')
-            let lastTime   = document.getElementById('bills').getAttribute('lastTime')
-            let bills      = $('#bills').val()
-            let finalPrice = price * Number(bills)
+        calculateNextPayment(lastTime, Number(bills))
 
-            calculateNextPayment(lastTime, Number(bills))
-
-            $('.final_price_bill').text('')
-            $('.final_price_bill').text(finalPrice)
-        })
+        $('.final_price_bill').text('')
+        $('.final_price_bill').text(finalPrice)
 }
 
 function addPayment() {
     document.getElementById('addPayment').addEventListener('click', function (e) {
         e.preventDefault()
-        let pathArr = window.location.pathname.split('/')
-        let client  = pathArr[pathArr.length - 1]
 
-        let body = {
-            'client': client,
-            'bills': document.getElementById('bills').value,
-            'csrf_token': document.getElementById('csrf_token').value
-        }
+        swal({
+            text: 'Сигурен ли сте че искате да направите плащането?',
+            buttons: ['Не', 'Да']
+        }).then((willDelete) => {
 
-        $.ajax({
-            type: 'POST',
-            url: baseUrl + 'addPayment',
-            data: JSON.stringify(body)
-        }).then((res) => {
-            console.log(res)
+            if ( willDelete ) {
+                if ( document.getElementById('bills').value <= 0 ) {
+                    toastr.error('Трябва да изберете поне една сметка')
+                    return
+                }
+
+                let pathArr = window.location.pathname.split('/')
+                let client = pathArr[pathArr.length - 1]
+
+                let body = {
+                    'client': client,
+                    'bills': document.getElementById('bills').value,
+                    'csrf_token': document.getElementById('csrf_token').value
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: baseUrl + 'addPayment',
+                    data: JSON.stringify(body)
+                }).then((res) => {
+                    let responce = JSON.parse(res)
+
+                    if ( responce['status'] === 'success' ) {
+                        toastr.success('Успешно направено плащане')
+                    }else {
+                        toastr.error(responce['description'])
+                    }
+                })
+            }
         })
     })
 }
@@ -135,40 +152,26 @@ function chooseBill() {
     let bills = $('.bills_table tbody tr').toArray()
 
     $('.bills_table tbody tr').on('click', function () {
-        if ( $(this).hasClass('active') ) {
-            let isChange = false
-            $(this).removeClass('active')
-
-            for (let i = 0; i < bills.length; i++) {
-                let currentBill = bills[i]
-
-                if ( isChange ) {
-                    $(currentBill).removeClass('active')
-                }
-                if ( $(this).is(currentBill) ) {
-                    isChange = true
-                }
-            }
-
-            calculateTime()
-
-        }else {
-            let isChange = false
-            $(this).addClass('active')
-
-            for (let i = bills.length - 1; i >= 0; i--) {
-                let currentBill = bills[i]
-
-                if ( isChange ) {
-                    $(currentBill).addClass('active')
-                }
-                if ( $(this).is(currentBill) ) {
-                    isChange = true
-                }
-            }
-
-            calculateTime()
+        for (let i = 0; i < bills.length; i++) {
+            let currentBill = bills[i]
+            $(currentBill).removeClass('selected')
+            $(currentBill).removeClass('active')
         }
+
+        $(this).addClass('selected')
+
+        for (let i = 0; i < bills.length; i++) {
+            let currentBill = bills[i]
+
+            $(currentBill).addClass('active')
+
+            if ( $(currentBill).hasClass('selected') ) {
+                $(currentBill).addClass('active')
+                break
+            }
+        }
+
+        calculateTime()
     })
 }
 
@@ -176,16 +179,30 @@ function calculateTime() {
     let activeBills = $('.active').toArray().length
 
     chooseBills(activeBills)
+
+    document.getElementById('bills').value = activeBills
+
 }
 
 async function addNextPayment() {
-    let billTemplate = await $.get(baseUrl + 'Public/templatesHbs/addBillTemplate.hbs')
+    let billTemplate       = await $.get(baseUrl + 'Public/templatesHbs/addBillTemplate.hbs')
+    let billsTableTemplate = await $.get(baseUrl + 'Public/templatesHbs/billsTableTemplate.hbs')
 
     $('.add_bill_button').on('click', function (e) {
         e.preventDefault()
 
-        let lastTime     = Number($('.last_bill_to').attr('last_bill_to'))
+        let lastTime     = $('.last_bill_to').attr('last_bill_to')
 
+        if ( lastTime === undefined ) {
+            lastTime  = $('#bills').attr('lastTime')
+            let price = $('#bills').attr('price')
+
+            renderBillsTable(billsTableTemplate, lastTime, price)
+
+            return
+        }else {
+            lastTime = Number(lastTime)
+        }
         $('.last_bill_to').removeClass('last_bill_to')
         let currentTime  = Math.round(new Date() / 1000)
         let price        = $('#bills').attr('price')
@@ -193,15 +210,11 @@ async function addNextPayment() {
         if ( Number(lastTime) - Number(currentTime) >= 0 ) {
 
             renderBill(billTemplate, lastTime, price)
-            chooseBill()
-            calculateTime()
 
         }else {
             if ( currentTime - lastTime >= 7905600 ) {
 
                 renderBill(billTemplate, currentTime, price)
-                chooseBill()
-                calculateTime()
 
             }else {
                 let nextFrom = lastTime
@@ -230,4 +243,57 @@ function renderBill(billTemplate, lastTime, price) {
     let template = Handlebars.compile(billTemplate)
     let html     = template(obj)
     $('.bills_table tbody').append(html)
+
+    let arr = $('.bills_table tbody tr').toArray()
+
+    for (let i = 0; i < arr.length; i++) {
+        let currentBill = arr[i]
+
+        $(currentBill).addClass('active')
+    }
+
+    chooseBill()
+    calculateTime()
+}
+
+function renderBillsTable(billTableTemplate, lastTime, price) {
+    lastTime = Number(lastTime)
+
+    let obj = {
+        'start': moment(lastTime * 1000).format('LL'),
+        'end': moment(lastTime * 1000).add(2635200, 'seconds').format('LL'),
+        'endSeconds': lastTime + 2635200,
+        'sum': price
+    }
+
+    let template = Handlebars.compile(billTableTemplate)
+    let html     = template(obj)
+    $('.bill_table_container').append(html)
+
+    chooseBill()
+    calculateTime()
+}
+
+function billTo() {
+    let paidToSeconds = Number($('.paid_to').text())
+
+    $('.paid_to').text(moment(paidToSeconds * 1000).format('LL'))
+}
+
+function updateStartData() {
+    let register    = $('.date_register').text()
+    let currentTime = Math.abs(new Date() / 1000)
+    let lastTime    = document.getElementById('bills').getAttribute('lastTime')
+
+    $('.date_register').text(moment(register * 1000).format('LL'))
+
+    if ( lastTime > currentTime ) {
+        $('.client_info_first').append('<p>Статус: Платил</p>')
+    }else {
+        if ( currentTime - lastTime >= 7905600 ) {
+            $('.client_info_first').append('<p>Статус: Спрян</p>')
+        }else {
+            $('.client_info_first').append('<p>Статус: Просрочен</p>')
+        }
+    }
 }
