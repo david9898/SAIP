@@ -1,6 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100);
 
-
 .clients_navigation {
     text-align: right;
     max-width: 600px;
@@ -221,4 +220,26 @@ td.text-right {
         transform:translateY(0);
     }
 }
+
+#clients_list .table-fill tr .overdue {
+    background-color: yellow;
+    color: black;
+    text-align: center;
+    font-size: 18px;
+}
+
+#clients_list .table-fill tr .paid {
+    background-color: lawngreen;
+    color: black;
+    text-align: center;
+    font-size: 18px;
+}
+
+#clients_list .table-fill tr .delay {
+    background-color: red;
+    color: black;
+    text-align: center;
+    font-size: 18px;
+}
+
 

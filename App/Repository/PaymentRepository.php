@@ -28,11 +28,6 @@ class PaymentRepository implements PaymentRepositoryInterface
                         ->current();
     }
 
-    public function getAllPayments(int $clientId): ?\Generator
-    {
-
-    }
-
     public function addPayment(PaymentDTO $payment): bool
     {
         $sql = 'INSERT INTO payments (time, start_time, end_time, sum, operator, client)
@@ -49,4 +44,18 @@ class PaymentRepository implements PaymentRepositoryInterface
 
         return true;
     }
+
+    public function getClientPayments($clientId): ?\Generator
+    {
+        $sql = 'SELECT `time`, `start_time` as startTime, `end_time` as endTime, `sum`, staff.username
+                FROM payments JOIN staff ON payments.operator = staff.id
+                WHERE payments.`client` = :clientId
+                ORDER BY time';
+
+        return $this->db->prepare($sql)
+            ->bindParam('clientId', $clientId, \PDO::PARAM_INT)
+            ->execute()
+            ->fetchObject(PaymentDTO::class);
+    }
+
 }

@@ -26,7 +26,7 @@ class Request implements RequestInterface
 
     public function isSubmit(string $buttonName): bool
     {
-        if ( isset($this->post[$buttonName]) || isset($this->get[$buttonName]) ) {
+        if ( isset($this->post[$buttonName]) ) {
             return true;
         }
 

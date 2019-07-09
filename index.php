@@ -1,16 +1,28 @@
 <?php
 
-spl_autoload_register();
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+
+spl_autoload_register
+(
+//    function( $class )
+//    {
+//        $explodeClass = explode('\\', $class);
+//
+//        require_once $explodeClass[0] . '/' . $explodeClass[1] . '/' .  $explodeClass[2] . '.php';
+//    }
+);
 
 require_once 'vendor/autoload.php';
 
 $router = new \Phroute\Phroute\RouteCollector(new \Phroute\Phroute\RouteParser());
 
 function processInput(){
-    $url = array_slice(explode('/', $_SERVER['REQUEST_URI']), 2);
+    $url = explode('/', $_SERVER['REQUEST_URI']);
 
     $string = '';
-    for ($i = 0; $i < count($url); $i++) {
+    for ($i = 2; $i < count($url); $i++) {
         $string = $string . '/' . $url[$i];
     }
 

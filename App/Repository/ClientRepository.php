@@ -4,6 +4,7 @@
 namespace App\Repository;
 
 use App\DTO\ClientDTO;
+use App\DTO\PaymentDTO;
 use Core\Database\PrepareStatementInterface;
 
 class ClientRepository implements ClientRepositoryInterface
@@ -48,12 +49,14 @@ class ClientRepository implements ClientRepositoryInterface
 
     public function getMoreClients($firstResult): ?\Generator
     {
-        $sql = 'SELECT abonaments.name as abonament, streets.name as street, 
-                towns.name as town, email, first_name as firstName, last_name as lastName, clients.id
+        $sql = 'SELECT abonaments.name as abonament, streets.name as street, towns.name as town, 
+                first_name as firstName, last_name as lastName, clients.id, payments.end_time as paid
                 FROM clients
                 JOIN abonaments ON abonaments.id = clients.abonament
                 JOIN towns ON towns.id = clients.town
                 JOIN streets ON streets.id = clients.street
+                LEFT JOIN payments ON payments.id = 
+                (SELECT id FROM payments WHERE `client` = clients.id ORDER BY id DESC LIMIT 1)
                 ORDER BY clients.id DESC
                 LIMIT :firstResult, 20';
 
@@ -138,5 +141,4 @@ class ClientRepository implements ClientRepositoryInterface
                         ->fetchObject(ClientDTO::class)
                         ->current();
     }
-
 }

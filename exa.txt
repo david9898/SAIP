@@ -1,0 +1,59 @@
+<?php if ( $data['payments'] !== null ): ?>
+                                    <table class="bills_table">
+                                        <thead>
+                                            <tr>
+                                                <th>От</th>
+                                                <th>До</th>
+                                                <th>Цена</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                    <?php foreach ($data['payments'] as $payment): ?>
+                                        <tr class="active">
+                                            <td class="start_payment"><?= $payment->getStartTime() ?></td>
+                                            <td class="end_payment"><?= $payment->getEndTime() ?></td>
+                                            <td><?= $client->getSum() ?>лв.</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+
+                                    <?php if ( $data['bills']['delay'] !== 'none' ): ?>
+                                        <div class="bill_table_container">
+                                            <?php if ( $data['bills']['delay'] === 'no' ): ?>
+                                                <p>Платил до <span class="paid_to"><?= $data['bills']['paid'] ?></span></p>
+                                            <?php else: ?>
+                                                        <?php for ($i = 0;$i < count($data['bills']['bills']); $i++): ?>
+                                                            <?php if ( $i === count($data['bills']['bills']) - 1 ): ?>
+                                                                <tr class="active">
+                                                                    <td class="start_payment"><?= $data['bills']['bills'][$i]['start'] ?></td>
+                                                                    <td class="end_payment last_bill_to" last_bill_to="<?= $data['bills']['bills'][$i]['end'] ?>"><?= $data['bills']['bills'][$i]['end'] ?></td>
+                                                                    <td><?= $client->getSum() ?>лв.</td>
+                                                                </tr>
+                                                            <?php else: ?>
+                                                                <tr class="active">
+                                                                    <td class="start_payment"><?= $data['bills']['bills'][$i]['start'] ?></td>
+                                                                    <td class="end_payment"><?= $data['bills']['bills'][$i]['end'] ?></td>
+                                                                    <td><?= $client->getSum() ?>лв.</td>
+                                                                </tr>
+                                                            <?php endif; ?>
+                                                        <?php endfor; ?>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td colspan="3">Цена: <span class="final_price_bill"><?= count($data['bills']['bills']) * $client->getSum() ?></span>лв.</td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            <?php endif; ?>
+
+                                            <?php else: ?>
+                                            <p>Няма досегашни плащания</p>
+                                            <div class="bill_table_container">
+
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php else: ?>
+                                            <p>Няма досегашни плащания</p>
+                                            <div class="bill_table_container">
+
+                                            </div>
+                                    <?php endif; ?>

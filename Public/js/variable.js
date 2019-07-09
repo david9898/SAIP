@@ -1,1 +1,1 @@
-let baseUrl = 'http://localhost:82/Network_project/'
+let baseUrl = 'http://localhost:82/Network_Project/'

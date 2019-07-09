@@ -21,5 +21,4 @@ interface ClientRepositoryInterface
     public function getAllClients(): \Generator;
 
     public function getClientAbonamentPrice($clientId): ClientDTO;
-
 }

@@ -10,7 +10,7 @@
           <option name="port" value="2022" />
         </fileTransfer>
       </webServer>
-      <webServer id="8721b4e7-a8fe-48b4-a1b8-4094b2d27400" name="linda" url="http://linda.itn.bg">
+      <webServer id="2cac4ddb-eb8f-419f-998b-4a56dbad4b8d" name="linda" url="http://linda.itn.bg">
         <fileTransfer host="linda.itn.bg" port="2117" rootFolder="/linda/">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />

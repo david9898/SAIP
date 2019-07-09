@@ -33,6 +33,18 @@ function onScroll(clientTemplate) {
                             if ( responce['clients'] !== undefined ) {
                                 for (let client of responce['clients']) {
                                     let template = Handlebars.compile(clientTemplate)
+                                    if ( client['paid'] !== null ) {
+                                        client['paid'] = Math.floor((client['paid'] - (new Date() / 1000)) / 86400)
+
+                                        if ( client['paid'] <= -91 ) {
+                                            client['payment'] = 'delay'
+                                            client['paid'] = -91
+                                        }else if ( client['paid'] > -91 && client['paid'] < 0 ) {
+                                            client['payment'] = 'overdue'
+                                        }else if ( client['paid'] > 0 ) {
+                                            client['payment'] = 'paid'
+                                        }
+                                    }
                                     let html = template(client)
                                     $('.table-hover').append(html)
                                 }

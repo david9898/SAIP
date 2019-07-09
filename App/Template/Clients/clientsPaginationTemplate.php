@@ -1,6 +1,7 @@
 <?php
     /** @var $client \App\DTO\ClientDTO */
 ?>
+
 <section>
 
     <div class="clients_navigation">
@@ -43,8 +44,14 @@
                         <td class="text-left"><?= $client->getTown() ?></td>
                         <td class="text-left"><?= $client->getStreet() ?></td>
                         <?php if ( $client->getPaid() !== null ): ?>
-                            <td class="text-left"><?= $client->getPaid() ?></td>
-                        <?php else: ?>
+                                <?php if ( $client->getPaid() <= -91 ): ?>
+                                    <td class="text-left delay">-91 дни</td>
+                                <?php elseif ( $client->getPaid() > -91 && $client->getPaid() <= 0): ?>
+                                    <td class="text-left overdue"><?= $client->getPaid() ?> дни</td>
+                                <?php elseif ( $client->getPaid() > 0 ): ?>
+                                    <td class="text-left paid"><?= $client->getPaid() ?> дни</td>
+                                <?php endif; ?>
+                            <?php else: ?>
                             <td class="text-left">-</td>
                         <?php endif; ?>
                         <td class="text-left"><?= $client->getAbonament() ?></td>

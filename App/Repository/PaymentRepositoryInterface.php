@@ -10,7 +10,8 @@ interface PaymentRepositoryInterface
 {
     public function getLastPayment(int $clientId): ?PaymentDTO;
 
-    public function getAllPayments(int $clientId): ?\Generator;
-
     public function addPayment(PaymentDTO $payment): bool;
+
+    public function getClientPayments($clientId): ?\Generator ;
+
 }

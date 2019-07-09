@@ -217,14 +217,9 @@ async function addNextPayment() {
                 renderBill(billTemplate, currentTime, price)
 
             }else {
-                let nextFrom = lastTime
-                let nextTo   = lastTime + 2635200
+                lastTime = new Date() / 1000
 
-                $('.bills_table tbody').append('<tr>' +
-                    '<td>' + moment(nextFrom * 1000).format('LL') + '</td>' +
-                    '<td>' + moment(nextTo * 1000).format('LL') + '</td>' +
-                    '<td>' + price + '</td>' +
-                    '</tr>')
+                renderBill(billTemplate, lastTime, price)
             }
         }
     })

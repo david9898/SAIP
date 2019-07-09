@@ -4,11 +4,11 @@
 namespace App\Controller;
 
 use App\Repository\AbonamentRepository;
-use App\Repository\BillRepository;
 use App\Repository\ClientRepository;
 use App\Repository\PaymentRepository;
 use App\Repository\TownRepository;
 use App\Service\ClientService;
+use App\Service\PaymentService;
 use Core\Controller\AbstractController;
 use Core\Database\PrepareStatementInterface;
 
@@ -70,12 +70,13 @@ class ClientController extends AbstractController
     {
         $this->validateAccess(1);
 
-        $clientRepo    = new ClientRepository($db);
-        $paymentRepo   = new PaymentRepository($db);
-        $clientService = new ClientService();
-        $client        = $clientRepo->getClient($id);
-        $lastPayment   = $paymentRepo->getLastPayment($id);
-        $csrfToken     = $this->generateCsrfToken();
+        $clientRepo     = new ClientRepository($db);
+        $paymentRepo    = new PaymentRepository($db);
+        $clientService  = new ClientService();
+        $paymentService = new PaymentService();
+        $client         = $clientRepo->getClient($id);
+        $lastPayment    = $paymentRepo->getLastPayment($id);
+        $csrfToken      = $this->generateCsrfToken();
 
         if ( $lastPayment !== null ) {
             $lastTime = $lastPayment->getEndTime();
@@ -97,6 +98,7 @@ class ClientController extends AbstractController
             ],
             'client'     => $client,
             'bills'      => $clientService->calculateBills($lastPayment, $lastTime),
+            'payments'   => $paymentService->getClientPayments($paymentRepo, $id),
             'csrf_token' => $csrfToken
         ]);
     }

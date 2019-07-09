@@ -3,6 +3,10 @@
     <td class="text-left">{{ lastName }}</td>
     <td class="text-left">{{ town }}</td>
     <td class="text-left">{{ street }}</td>
-    <td class="text-left">{{ email }}</td>
+    {{#if paid }}
+        <td class="text-left {{ payment }}">{{ paid }} дни</td>
+        {{ else }}
+        <td class="text-left">-</td>
+    {{/if}}
     <td class="text-left">{{ abonament }}</td>
 </tr>

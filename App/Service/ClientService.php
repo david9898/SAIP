@@ -179,7 +179,7 @@ class ClientService implements ClientServiceInterface
                 ];
             }else {
                 $diffTime = time() - $lastTime;
-                $numBills    = ceil($diffTime / 2635200);
+                $numBills = floor($diffTime / 2635200);
 
                 if ( (int)$numBills === 1 ) {
                     $bills = [
