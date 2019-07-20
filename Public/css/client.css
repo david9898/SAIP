@@ -80,13 +80,14 @@
 
 .client_info {
     text-align: center;
-    margin-left: 320px;
+    /*margin-left: 320px;*/
 }
 
 .client_info .client_info_first {
     text-align: left;
     padding: 20px;
     border-radius: 50px;
+    margin: auto;
     width: 60%;
     background-color: white;
 }
@@ -98,4 +99,39 @@
 
 .ready-payment {
     background-color: blue;
+    color: white;
+}
+
+.client-nav {
+    display: flex;
+    width: 70%;
+    margin: auto;
+}
+
+.client-data {
+    width: 70%;
+    margin: auto;
+}
+
+.unselected-part-view {
+    border: none;
+    background-color: #C7C7C7;
+    color: white;
+    padding: 15px;
+}
+
+section {
+    padding-bottom: 0px;
+}
+
+.selected-part-view {
+    border: none;
+    background-color: #848484;
+    color: white;
+    padding: 15px;
+}
+
+.client-data {
+    background-color: #848484;
+    padding: 20px;
 }

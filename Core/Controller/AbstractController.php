@@ -51,26 +51,18 @@ abstract class AbstractController
         $session = new Session();
 
         if ( $isLog ) {
-            if ( $session->checkIfKeyExist('userData') ) {
-                if ( $role !== null ) {
-                    $userData = $session->get('userData');
+            if ( $role !== null ) {
+                $roles = $session->get('userData')['roles'];
 
-                    if ( $role === 'ROLE_CUSTOMER' ) {
-                        if ( $userData['role'] === 'ROLE_CUSTOMER' || $userData['role'] === 'ROLE_ADMIN' ) {
-                            return true;
-                        }
-                    }else if ( $role === 'ROLE_ADMIN' ) {
-                        if ( $userData['role'] === 'ROLE_ADMIN' ) {
-                            return true;
-                        }else {
-                            throw new AccessDenyException('You have no access!!!');
-                        }
-                    }
-                }else {
+                if ( in_array('ROLE_ADMIN', $roles) ) {
                     return true;
+                }else if ( in_array($role, $roles) ) {
+                    return true;
+                }else {
+                    throw new AccessDenyException('You have no access');
                 }
             }else {
-                $this->redirect('/login');
+                return true;
             }
         }else {
             if ( $session->checkIfKeyExist('userData') ) {

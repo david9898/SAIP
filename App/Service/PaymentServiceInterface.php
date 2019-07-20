@@ -4,7 +4,6 @@
 namespace App\Service;
 
 
-use App\DTO\PaymentDTO;
 use App\Repository\PaymentRepositoryInterface;
 
 interface PaymentServiceInterface

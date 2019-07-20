@@ -120,7 +120,3 @@ section {
     border-width: 1px 1px 3px;
     margin-bottom: 10px;
 }
-
-#client_basic .second_form_fieldset select {
-    height: 100px;
-}

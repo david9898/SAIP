@@ -75,14 +75,7 @@ class ClientController extends AbstractController
         $clientService  = new ClientService();
         $paymentService = new PaymentService();
         $client         = $clientRepo->getClient($id);
-        $lastPayment    = $paymentRepo->getLastPayment($id);
         $csrfToken      = $this->generateCsrfToken();
-
-        if ( $lastPayment !== null ) {
-            $lastTime = $lastPayment->getEndTime();
-        }else {
-            $lastTime = null;
-        }
 
         $this->render('Clients/clientTemplate.php', [
             'css'        => [
@@ -97,7 +90,7 @@ class ClientController extends AbstractController
                 'Public/js/client.js'
             ],
             'client'     => $client,
-            'bills'      => $clientService->calculateBills($lastPayment, $lastTime),
+            'bills'      => $clientService->calculateBills($paymentRepo, $id),
             'payments'   => $paymentService->getClientPayments($paymentRepo, $id),
             'csrf_token' => $csrfToken
         ]);

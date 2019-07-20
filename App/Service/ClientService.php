@@ -167,8 +167,18 @@ class ClientService implements ClientServiceInterface
         }
     }
 
-    public function calculateBills($lastPayment, $lastTime): array
+    public function calculateBills(PaymentRepositoryInterface $paymentRepo, $id): array
     {
+        $lastThreePayments = $paymentRepo->getLastThreePayments($id);
+
+        $lastPayment    = $paymentRepo->getLastPayment($id);
+
+        if ( $lastPayment !== null ) {
+            $lastTime = $lastPayment->getEndTime();
+        }else {
+            $lastTime = null;
+        }
+
         if ( $lastPayment !== null ) {
             if ( $lastTime > time() ) {
                 $time = [
@@ -179,7 +189,7 @@ class ClientService implements ClientServiceInterface
                 ];
             }else {
                 $diffTime = time() - $lastTime;
-                $numBills = floor($diffTime / 2635200);
+                $numBills = ceil($diffTime / 2635200);
 
                 if ( (int)$numBills === 1 ) {
                     $bills = [
@@ -213,6 +223,11 @@ class ClientService implements ClientServiceInterface
             ];
         }
 
+    }
+
+    public function checkIfPaymentsAreReadable(?\Generator $payments): bool
+    {
+        
     }
 
 }

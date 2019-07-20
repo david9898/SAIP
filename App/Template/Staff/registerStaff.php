@@ -14,7 +14,7 @@
                         <input type="password" name="repeat_password" placeholder="Повтори паролата *">
 
                         <label for="role">Роля:</label>
-                        <select id="role" name="role">
+                        <select id="role" name="roles[]" multiple>
                             <option selected value="none">-</option>
                             <option value="1">Служител</option>
                             <option value="2">Админ</option>

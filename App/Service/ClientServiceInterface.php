@@ -22,5 +22,8 @@ interface ClientServiceInterface
     public function addPayment(Request $request, PaymentRepositoryInterface $paymentRepo,
                                 ClientRepositoryInterface $clientRepo): array;
 
-    public function calculateBills($lastPayment, $lastTime): array;
+    public function calculateBills(PaymentRepositoryInterface $paymentRepo, $id): array;
+
+    public function checkIfPaymentsAreReadable(?\Generator $payments): bool;
+
 }

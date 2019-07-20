@@ -18,13 +18,14 @@ class ClientRepository implements ClientRepositoryInterface
 
     public function addClient(ClientDTO $client): bool
     {
-        $sql = 'INSERT INTO clients(town, abonament, neighborhood, first_name, last_name, phone, email, street, date_register, description)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $sql = 'INSERT INTO clients(town, abonament, neighborhood, first_name, last_name, 
+                                    phone, email, street, date_register, description, street_number)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
         $this->db->prepare($sql)
                 ->execute([$client->getTown(), $client->getAbonament(), $client->getNeighborhood(), $client->getFirstName(),
                         $client->getLastName(), $client->getPhone(), $client->getEmail(), $client->getStreet(),
-                        $client->getDateRegister(), $client->getDescription()]);
+                        $client->getDateRegister(), $client->getDescription(), $client->getStreetNumber()]);
 
         return true;
     }

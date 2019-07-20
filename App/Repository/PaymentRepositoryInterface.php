@@ -14,4 +14,5 @@ interface PaymentRepositoryInterface
 
     public function getClientPayments($clientId): ?\Generator ;
 
+    public function getLastThreePayments($clientId): ?\Generator;
 }

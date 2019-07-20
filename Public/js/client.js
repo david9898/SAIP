@@ -1,11 +1,16 @@
 window.onload = function () {
     moment.locale('bg')
+
+    sessionStorage.setItem('client-part', 'info')
+
     addNextPayment()
     addPayment()
     makePaymentsToDates()
     chooseBill()
     billTo()
     updateStartData()
+    showPart()
+    changePartView()
 }
 
 function chooseBills(bills) {
@@ -149,13 +154,13 @@ function makePaymentsToDates() {
 }
 
 function chooseBill() {
-    let bills = $('.bills_table tbody tr').toArray()
+    let bills = $('.bills_table tbody .ready-payment').toArray()
 
-    $('.bills_table tbody tr').on('click', function () {
+    $('.bills_table tbody .ready-payment').on('click', function () {
         for (let i = 0; i < bills.length; i++) {
             let currentBill = bills[i]
             $(currentBill).removeClass('selected')
-            $(currentBill).removeClass('active')
+            $(currentBill).removeClass('ready-payment')
         }
 
         $(this).addClass('selected')
@@ -163,10 +168,10 @@ function chooseBill() {
         for (let i = 0; i < bills.length; i++) {
             let currentBill = bills[i]
 
-            $(currentBill).addClass('active')
+            $(currentBill).addClass('ready-payment')
 
             if ( $(currentBill).hasClass('selected') ) {
-                $(currentBill).addClass('active')
+                $(currentBill).addClass('ready-payment')
                 break
             }
         }
@@ -176,7 +181,7 @@ function chooseBill() {
 }
 
 function calculateTime() {
-    let activeBills = $('.active').toArray().length
+    let activeBills = $('.ready-payment').toArray().length
 
     chooseBills(activeBills)
 
@@ -186,7 +191,6 @@ function calculateTime() {
 
 async function addNextPayment() {
     let billTemplate       = await $.get(baseUrl + 'Public/templatesHbs/addBillTemplate.hbs')
-    let billsTableTemplate = await $.get(baseUrl + 'Public/templatesHbs/billsTableTemplate.hbs')
 
     $('.add_bill_button').on('click', function (e) {
         e.preventDefault()
@@ -197,7 +201,7 @@ async function addNextPayment() {
             lastTime  = $('#bills').attr('lastTime')
             let price = $('#bills').attr('price')
 
-            renderBillsTable(billsTableTemplate, lastTime, price)
+            renderBill(billTemplate, lastTime, price)
 
             return
         }else {
@@ -244,26 +248,10 @@ function renderBill(billTemplate, lastTime, price) {
     for (let i = 0; i < arr.length; i++) {
         let currentBill = arr[i]
 
-        $(currentBill).addClass('active')
+        if ( !$(currentBill).hasClass('active') ) {
+            $(currentBill).addClass('ready-payment')
+        }
     }
-
-    chooseBill()
-    calculateTime()
-}
-
-function renderBillsTable(billTableTemplate, lastTime, price) {
-    lastTime = Number(lastTime)
-
-    let obj = {
-        'start': moment(lastTime * 1000).format('LL'),
-        'end': moment(lastTime * 1000).add(2635200, 'seconds').format('LL'),
-        'endSeconds': lastTime + 2635200,
-        'sum': price
-    }
-
-    let template = Handlebars.compile(billTableTemplate)
-    let html     = template(obj)
-    $('.bill_table_container').append(html)
 
     chooseBill()
     calculateTime()
@@ -291,4 +279,42 @@ function updateStartData() {
             $('.client_info_first').append('<p>Статус: Просрочен</p>')
         }
     }
+}
+
+function showPart() {
+    let part = sessionStorage.getItem('client-part')
+
+    if ( part === 'info' ) {
+        $('.add_payment').css('display', 'none')
+        $('.client_info').css('display', 'block')
+    }
+
+    if ( part === 'payments' ) {
+        $('.client_info').css('display', 'none')
+        $('.add_payment').css('display', 'block')
+    }
+}
+
+function changePartView() {
+    $('.client-info-btn').on('click', function () {
+        sessionStorage.setItem('client-part', 'info')
+
+        $(this).removeClass('unselected-part-view')
+        $(this).addClass('selected-part-view')
+        $('.client-payment-btn').removeClass('selected-part-view')
+        $('.client-payment-btn').addClass('unselected-part-view')
+
+        showPart()
+    })
+
+    $('.client-payment-btn').on('click', function () {
+        sessionStorage.setItem('client-part', 'payments')
+
+        $(this).removeClass('unselected-part-view')
+        $(this).addClass('selected-part-view')
+        $('.client-info-btn').removeClass('selected-part-view')
+        $('.client-info-btn').addClass('unselected-part-view')
+
+        showPart()
+    })
 }

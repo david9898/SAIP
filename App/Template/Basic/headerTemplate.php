@@ -9,6 +9,7 @@
         <script src="node_modules/jquery/dist/jquery.js"></script>
         <script src="node_modules/toastr/build/toastr.min.js"></script>
         <script src="Public/js/variable.js"></script>
+        <script src="Public/js/header.js"></script>
         <?php if ( isset($data['css']) ): ?>
             <?php foreach ($data['css'] as $css): ?>
                 <link rel="stylesheet" href="<?= $css ?>">
@@ -24,14 +25,18 @@
     <body>
 
         <header>
-            <p class="hamburger"><i class="fas fa-bars"></i></p>
-            <p class="logo">LINDA</p>
-            <div>
-                <button class="admin_button">Админ панел</button>
-                <ul class="admin_panel">
-                    <a href="addStaff">Добави персонал</a>
-                    <a href="logout">Изход</a>
-                </ul>
+            <div class="navbar">
+                <p class="hamburger"><i class="fas fa-bars"></i></p>
+                <p class="logo">LINDA</p>
+                <div class="dropdown">
+                    <p>Админ панел</p>
+                    <div class="start_panel">
+                        <a href="addStaff">Добави персонал</a>
+                        <a href="addAbonament">Добави абонамент</a>
+                        <a href="addStreet">Добави улица</a>
+                        <a href="logout">Изход</a>
+                    </div>
+                </div>
             </div>
         </header>
 

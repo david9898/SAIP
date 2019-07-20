@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\DTO\PaymentDTO;
 use Core\Database\PrepareStatementInterface;
+use phpDocumentor\Reflection\Types\This;
 
 class PaymentRepository implements PaymentRepositoryInterface
 {
@@ -56,6 +57,18 @@ class PaymentRepository implements PaymentRepositoryInterface
             ->bindParam('clientId', $clientId, \PDO::PARAM_INT)
             ->execute()
             ->fetchObject(PaymentDTO::class);
+    }
+
+    public function getLastThreePayments($clientId): ?\Generator
+    {
+        $sql = 'SELECT end_time as endTime, start_time as startTime FROM payments 
+                WHERE client = :clientId ORDER BY id DESC LIMIT 3';
+
+        return $this->db->prepare($sql)
+                        ->bindParam('clientId', $clientId, \PDO::PARAM_INT)
+                        ->execute()
+                        ->fetchObject(PaymentDTO::class)
+                        ->current();
     }
 
 }

@@ -19,18 +19,25 @@ class StaffService implements StaffServiceInterface
         $staff   = $staffRepo->getCustomer($post['username']);
 
         if ( $staff === null ) {
-            $session->addFlashMessage('error', 'Грешно потребителско име');
+            $session->addFlashMessage('error', 'Грешно потребителско име!');
             return false;
         }
 
         $pass = hash('sha512', $post['password']);
 
         if ( $pass === $staff->getPassword() ) {
-            $session->addFlashMessage('success', 'Добре дошли');
+
+            $roles = $staffRepo->getCustomerRoles($staff->getId());
+
+            foreach ($roles as $role) {
+                $staff->addRole($role['role']);
+            }
+
+            $session->addFlashMessage('success', 'Добре дошли!');
             $userData = [
                 'id'       => $staff->getId(),
                 'username' => $staff->getUsername(),
-                'role'     => $staff->getRole()
+                'roles'     => $staff->getRoles()
             ];
 
             $session->set('userData', $userData);
@@ -38,7 +45,7 @@ class StaffService implements StaffServiceInterface
             return true;
         }
 
-        $session->addFlashMessage('error', 'Грешна парола');
+        $session->addFlashMessage('error', 'Грешна парола!');
 
         return false;
     }
@@ -46,17 +53,23 @@ class StaffService implements StaffServiceInterface
     public function registerStaff(StaffRepositoryInterface $staffRepo, array $post): bool
     {
         $session    = new Session();
-        $dataBinder = new DataBinder();
 
         if ( $session->get('csrf_token') === $post['csrf_token'] ) {
             if ($post['password'] === $post['repeat_password']) {
+
                 $customerData = new StaffDTO();
                 /** @var StaffDTO $customer */
-                $customer     = $dataBinder->bindData($post, $customerData);
+                $customer     = DataBinder::bindData($post, $customerData);
+
                 $newPass      = hash('sha512', $customer->getPassword());
                 $customer->setPassword($newPass);
 
                 $staffRepo->addCustomer($customer);
+
+                foreach ($customer->getRoles() as $role) {
+                    $staffRepo->addRole($staffRepo->getCustomer($customer->getUsername())->getId(), $role);
+                }
+
                 $session->addFlashMessage('success', 'Успешно добавихте нов служител');
 
                 return true;

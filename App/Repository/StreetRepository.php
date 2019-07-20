@@ -40,5 +40,27 @@ class StreetRepository implements StreetRepositoryInterface
 
     }
 
+    public function addStreet($name): bool
+    {
+        $sql = 'INSERT INTO streets (name) VALUES (:name)';
+
+        $this->db->prepare($sql)
+                ->bindParam('name', $name, \PDO::PARAM_STR)
+                ->execute();
+
+        return true;
+    }
+
+    public function addRelationTownStreet($streetId, $townId): bool
+    {
+        $sql = 'INSERT INTO relations_towns_streets (town, street) VALUES (:townId, :streetId)';
+
+        $this->db->prepare($sql)
+                ->bindParam('townId', $townId, \PDO::PARAM_INT)
+                ->bindParam('streetId', $streetId, \PDO::PARAM_INT)
+                ->execute();
+
+        return true;
+    }
 
 }

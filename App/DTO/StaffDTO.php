@@ -12,7 +12,12 @@ class StaffDTO
     private $phone;
     private $password;
     private $username;
-    private $role;
+    private $roles;
+
+    public function __construct()
+    {
+        $this->roles = [];
+    }
 
     /**
      * @return mixed
@@ -113,16 +118,22 @@ class StaffDTO
     /**
      * @return mixed
      */
-    public function getRole()
+    public function getRoles()
     {
-        return $this->role;
+        return $this->roles;
     }
 
     /**
-     * @param mixed $role
+     * @param array $roles
      */
-    public function setRole($role): void
+    public function setRoles(array $roles): void
     {
-        $this->role = $role;
+        $this->roles = $roles;
+    }
+
+
+    public function addRole($role)
+    {
+        $this->roles[] = $role;
     }
 }

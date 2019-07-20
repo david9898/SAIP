@@ -25,4 +25,29 @@ class AbonamentRepository implements AbonamentRepositoryInterface
                 ->fetchObject(AbonamentDTO::class);
     }
 
+    public function checkIfAbonamentExist(string $name): ?AbonamentDTO
+    {
+        $sql = 'SELECT id FROM abonaments WHERE name = :name';
+
+        return $this->db->prepare($sql)
+                        ->bindParam('name', $name, \PDO::PARAM_STR)
+                        ->execute()
+                        ->fetchObject(AbonamentDTO::class)
+                        ->current();
+    }
+
+    public function addAbonament(AbonamentDTO $abonamentDTO): bool
+    {
+        $sql = 'INSERT INTO abonaments (name, price, description)
+                VALUES (:name, :price, :description)';
+
+        $this->db->prepare($sql)
+                ->bindParam('name', $abonamentDTO->getName(), \PDO::PARAM_STR)
+                ->bindParam('price', $abonamentDTO->getPrice(), \PDO::PARAM_STR)
+                ->bindParam('description', $abonamentDTO->getDescription(), \PDO::PARAM_STR)
+                ->execute();
+
+        return true;
+    }
+
 }

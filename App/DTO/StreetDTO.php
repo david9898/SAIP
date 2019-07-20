@@ -8,6 +8,7 @@ class StreetDTO
 {
     private $id;
     private $name;
+    private $townId;
 
     /**
      * @return mixed
@@ -39,6 +40,22 @@ class StreetDTO
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTownId()
+    {
+        return $this->townId;
+    }
+
+    /**
+     * @param mixed $townId
+     */
+    public function setTownId($townId): void
+    {
+        $this->townId = $townId;
     }
 
 }

@@ -24,7 +24,9 @@ class ClientDTO extends Validator
 
     public function __construct()
     {
-        $this->setNeighborhood(null);
+        if ( $this->getNeighborhood() === null ) {
+            $this->setNeighborhood(null);
+        }
         $this->setDescription(null);
         $this->dateRegister = time();
     }

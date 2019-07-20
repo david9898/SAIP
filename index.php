@@ -1,8 +1,8 @@
 <?php
 
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 spl_autoload_register
 (
@@ -107,6 +107,20 @@ $router->post('/addPayment', function () {
 
     $clientApiController = new \App\ApiController\ClientApiController();
     $clientApiController->addPayment($db);
+});
+
+$router->any('/addAbonament', function () {
+   require_once 'Front Layer/start.php';
+
+   $staffController = new \App\Controller\StaffController();
+   $staffController->addAbonament($db);
+});
+
+$router->any('/addStreet', function () {
+    require_once 'Front Layer/start.php';
+
+    $staffController = new \App\Controller\StaffController();
+    $staffController->addStreet($db);
 });
 
 $dispatcher =  new \Phroute\Phroute\Dispatcher($router->getData());
