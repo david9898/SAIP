@@ -169,9 +169,45 @@ class ClientService implements ClientServiceInterface
 
     public function calculateBills(PaymentRepositoryInterface $paymentRepo, $id): array
     {
-        $lastThreePayments = $paymentRepo->getLastThreePayments($id);
+        $lastThreePayments       = $paymentRepo->getLastThreePayments($id);
 
+        $checkIfReadablePayments = $this->checkIfPaymentsAreReadable($lastThreePayments);
+
+        if ( $checkIfReadablePayments === null || $checkIfReadablePayments === true ) {
+
+            return $this->calculateBillsIfTrueOrNull($paymentRepo, $id);
+
+        }else {
+
+            return $this->calculateBillsIfFalse($paymentRepo, $id);
+
+        }
+
+
+    }
+
+    public function checkIfPaymentsAreReadable(?\Generator $payments): ?bool
+    {
+        if ( $payments === null ) {
+            return null;
+        }
+
+        foreach ($payments as $payment) {
+            /** @var PaymentDTO $payment */
+            $diff = $payment->getEndTime() - $payment->getStartTime();
+
+            if ( $diff > 2635200 ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function calculateBillsIfTrueOrNull(PaymentRepositoryInterface $paymentRepo, $id): array
+    {
         $lastPayment    = $paymentRepo->getLastPayment($id);
+        $time           = time();
 
         if ( $lastPayment !== null ) {
             $lastTime = $lastPayment->getEndTime();
@@ -180,8 +216,8 @@ class ClientService implements ClientServiceInterface
         }
 
         if ( $lastPayment !== null ) {
-            if ( $lastTime > time() ) {
-                $time = [
+            if ( $lastTime > $time ) {
+                return [
                     'delay'    => 'no',
                     'paid'     => $lastTime,
                     'lastTime' => $lastTime,
@@ -208,13 +244,12 @@ class ClientService implements ClientServiceInterface
                         ['start' => $lastTime + 5270400, 'end' => $lastTime + 7905600]
                     ];
                 }
-                $time = [
+                return [
                     'delay'    => 'yes',
                     'bills'    => $bills,
                     'lastTime' => $lastTime
                 ];
             }
-            return $time;
         }else {
             return [
                 'delay'    => 'none',
@@ -222,12 +257,136 @@ class ClientService implements ClientServiceInterface
                 'bills'    => []
             ];
         }
-
     }
 
-    public function checkIfPaymentsAreReadable(?\Generator $payments): bool
+    public function calculateBillsIfFalse(PaymentRepositoryInterface $paymentRepo, $id): array
     {
-        
+        $lastPayment       = $paymentRepo->getLastPayment($id);
+        $lastTime          = $lastPayment->getEndTime();
+        $time              = time();
+        $lastThreePayments = $paymentRepo->getLastThreePayments($id);
+
+        if ( $lastTime > $time ) {
+            return [
+                'delay'    => 'no',
+                'paid'     => $lastTime,
+                'lastTime' => $lastTime,
+                'bills'    => []
+            ];
+        }else {
+            $diffTime = time() - $lastTime;
+            $numBills = ceil($diffTime / 2635200);
+
+            if ( (int)$numBills === 1 ) {
+                $bills = [
+                    ['start' => $lastTime, 'end' => $lastTime + 2635200]
+                ];
+            }
+            else if ( (int)$numBills === 2 ) {
+                $bills = [
+                    ['start' => $lastTime, 'end' => $lastTime + 2635200],
+                    ['start' => $lastTime + 2635200, 'end' => $lastTime + 5270400]
+                ];
+            }else{
+                $bills = [
+                    ['start' => $lastTime, 'end' => $lastTime + 2635200],
+                    ['start' => $lastTime + 2635200, 'end' => $lastTime + 5270400],
+                    ['start' => $lastTime + 5270400, 'end' => $lastTime + 7905600]
+                ];
+            }
+            return [
+                'delay'    => 'yes',
+                'bills'    => $this->makeBillsReadable($bills, $lastThreePayments),
+                'lastTime' => $lastTime
+            ];
+        }
+    }
+
+    public function makeBillsReadable(array $bills, $lastThreePayments): array
+    {
+        /** @var PaymentDTO[] $lastPayments */
+        $lastPayments = [];
+
+        foreach ($lastThreePayments as $payment) {
+            $lastPayments[] = $payment;
+        }
+
+        for ($i = 0;$i < count($lastPayments);$i++) {
+            /** @var PaymentDTO $currPayment */
+            $currPayment = $lastPayments[$i];
+
+            $diff = $currPayment->getEndTime() - $currPayment->getStartTime();
+
+            if ( $diff > 2635200 ) {
+
+                if ( count($lastPayments) === 3 ) {
+
+                    if ($i === 1) {
+
+                        if (isset($bills[0])) {
+                            $bills[0]['start'] = $bills[0]['start'] - $diff + 2635200;
+                            $bills[0]['end']   = $bills[0]['end'] - $diff + 2635200;
+                        }
+
+
+                    }
+
+                    if ($i === 2) {
+
+                        if (isset($bills[0])) {
+                            $bills[0]['start'] = $bills[0]['start'] - $diff + 2635200;
+                            $bills[0]['end']   = $bills[0]['end'] - $diff + 2635200;
+                        }
+
+                        if (isset($bills[1])) {
+                            $bills[1]['start'] = $bills[1]['start'] - $diff + 2635200;
+                            $bills[1]['end']   = $bills[1]['end'] - $diff + 2635200;
+                        }
+
+                    }
+                }
+
+                if ( count($lastPayments) === 2 ) {
+                    if ($i === 0) {
+                        if (isset($bills[0])) {
+                            $bills[0]['start'] = $bills[0]['start'] - $diff + 2635200;
+                            $bills[0]['end']   = $bills[0]['end'] - $diff + 2635200;
+                        }
+
+                    }
+
+                    if ($i === 1) {
+
+                        if (isset($bills[0])) {
+                            $bills[0]['start'] = $bills[0]['start'] - $diff + 2635200;
+                            $bills[0]['end']   = $bills[0]['end'] - $diff + 2635200;
+                        }
+
+                        if (isset($bills[1])) {
+                            $bills[1]['start'] = $bills[1]['start'] - $diff + 2635200;
+                            $bills[1]['end']   = $bills[1]['end'] - $diff + 2635200;
+                        }
+
+                    }
+
+                    if ( count($lastPayments) === 1 ) {
+
+                        if (isset($bills[0])) {
+                            $bills[0]['start'] = $bills[0]['start'] - $diff + 2635200;
+                            $bills[0]['end']   = $bills[0]['end'] - $diff + 2635200;
+                        }
+
+                        if (isset($bills[1])) {
+                            $bills[1]['start'] = $bills[1]['start'] - $diff + 2635200;
+                            $bills[1]['end']   = $bills[1]['end'] - $diff + 2635200;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        return $bills;
     }
 
 }

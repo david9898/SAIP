@@ -34,32 +34,6 @@ REPLACE INTO `abonaments` (`id`, `name`, `price`, `description`) VALUES
 	(3, 'СуперБърз', 50, 'Понася голямо натоварване');
 /*!40000 ALTER TABLE `abonaments` ENABLE KEYS */;
 
--- Дъмп структура за таблица network_controll.bills
-CREATE TABLE IF NOT EXISTS `bills` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `start` int(11) NOT NULL,
-  `end` int(11) NOT NULL,
-  `sum` int(11) NOT NULL,
-  `client` int(11) NOT NULL,
-  `time` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_bills_clients` (`client`),
-  CONSTRAINT `FK_bills_clients` FOREIGN KEY (`client`) REFERENCES `clients` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
-
--- Дъмп данни за таблица network_controll.bills: ~8 rows (approximately)
-/*!40000 ALTER TABLE `bills` DISABLE KEYS */;
-REPLACE INTO `bills` (`id`, `start`, `end`, `sum`, `client`, `time`) VALUES
-	(49, 1561302126, 1563894126, 25, 22, 1561364166),
-	(50, 1561302126, 1563894126, 40, 16, 1561364166),
-	(51, 1561302126, 1563894126, 40, 18, 1561364166),
-	(52, 1561302126, 1563894126, 40, 34, 1561364166),
-	(53, 1561302126, 1563894126, 40, 44, 1561364166),
-	(54, 1561302126, 1563894126, 40, 49, 1561364166),
-	(55, 1561302126, 1563894126, 40, 55, 1561364166),
-	(56, 1561299774, 1563891774, 40, 56, 1561364166);
-/*!40000 ALTER TABLE `bills` ENABLE KEYS */;
-
 -- Дъмп структура за таблица network_controll.clients
 CREATE TABLE IF NOT EXISTS `clients` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -208,9 +182,9 @@ CREATE TABLE IF NOT EXISTS `payments` (
   KEY `FK_payments_clients` (`client`),
   CONSTRAINT `FK_payments_clients` FOREIGN KEY (`client`) REFERENCES `clients` (`id`),
   CONSTRAINT `FK_payments_staff` FOREIGN KEY (`operator`) REFERENCES `staff` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=152 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=170 DEFAULT CHARSET=utf8;
 
--- Дъмп данни за таблица network_controll.payments: ~134 rows (approximately)
+-- Дъмп данни за таблица network_controll.payments: ~139 rows (approximately)
 /*!40000 ALTER TABLE `payments` DISABLE KEYS */;
 REPLACE INTO `payments` (`id`, `time`, `start_time`, `end_time`, `sum`, `operator`, `client`) VALUES
 	(1, 1561499886, 1561499886, 1564135086, 25, 4, 57),
@@ -346,7 +320,12 @@ REPLACE INTO `payments` (`id`, `time`, `start_time`, `end_time`, `sum`, `operato
 	(148, 1563535033, 1546170078, 1558264633, 25, 1, 39),
 	(149, 1563535285, 1558264633, 1560899833, 25, 1, 39),
 	(150, 1563535285, 1560899833, 1563535033, 25, 1, 39),
-	(151, 1563535285, 1563535033, 1566170233, 25, 1, 39);
+	(151, 1563535285, 1563535033, 1566170233, 25, 1, 39),
+	(152, 1563617599, 1540982399, 1543617599, 40, 1, 35),
+	(157, 1563629257, 1543629257, 1546264457, 40, 1, 34),
+	(167, 1563742948, 1546264457, 1558472548, 40, 1, 34),
+	(168, 1563742948, 1558472548, 1561107748, 40, 1, 34),
+	(169, 1563744017, 1543617599, 1558473617, 40, 1, 35);
 /*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 
 -- Дъмп структура за таблица network_controll.relations_staff_roles

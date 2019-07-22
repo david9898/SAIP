@@ -1,4 +1,4 @@
-<?php /** @var \App\DTO\ClientDTO $client */ $client = $data['client']; /** @var \App\DTO\PaymentDTO $payment */ ?>
+<?php /** @var \App\DTO\ClientDTO $client */ $client = $data['client']; /** @var \App\DTO\PaymentDTO $payment */  ?>
 
 <section>
 

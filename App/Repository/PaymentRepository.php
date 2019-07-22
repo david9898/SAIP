@@ -19,7 +19,7 @@ class PaymentRepository implements PaymentRepositoryInterface
 
     public function getLastPayment(int $clientId): ?PaymentDTO
     {
-        $sql = 'SELECT end_time as endTime FROM payments 
+        $sql = 'SELECT end_time as endTime, start_time as startTime FROM payments 
                 WHERE client = :clientId ORDER BY id DESC LIMIT 1';
 
         return $this->db->prepare($sql)
@@ -62,13 +62,12 @@ class PaymentRepository implements PaymentRepositoryInterface
     public function getLastThreePayments($clientId): ?\Generator
     {
         $sql = 'SELECT end_time as endTime, start_time as startTime FROM payments 
-                WHERE client = :clientId ORDER BY id DESC LIMIT 3';
+                WHERE client = :clientId ORDER BY id LIMIT 3';
 
         return $this->db->prepare($sql)
                         ->bindParam('clientId', $clientId, \PDO::PARAM_INT)
                         ->execute()
-                        ->fetchObject(PaymentDTO::class)
-                        ->current();
+                        ->fetchObject(PaymentDTO::class);
     }
 
 }

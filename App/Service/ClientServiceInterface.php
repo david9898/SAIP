@@ -24,6 +24,12 @@ interface ClientServiceInterface
 
     public function calculateBills(PaymentRepositoryInterface $paymentRepo, $id): array;
 
-    public function checkIfPaymentsAreReadable(?\Generator $payments): bool;
+    public function checkIfPaymentsAreReadable(?\Generator $payments): ?bool;
+
+    public function calculateBillsIfTrueOrNull(PaymentRepositoryInterface $paymentRepo, $id): array;
+
+    public function calculateBillsIfFalse(PaymentRepositoryInterface $paymentRepo, $id): array;
+
+    public function makeBillsReadable(array $bills, $lastThreePayments): array;
 
 }
