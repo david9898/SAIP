@@ -311,12 +311,13 @@ class ClientService implements ClientServiceInterface
             $lastPayments[] = $payment;
         }
 
+        $lastPayments = array_reverse($lastPayments);
+
         for ($i = 0;$i < count($lastPayments);$i++) {
             /** @var PaymentDTO $currPayment */
             $currPayment = $lastPayments[$i];
 
             $diff = $currPayment->getEndTime() - $currPayment->getStartTime();
-
             if ( $diff > 2635200 ) {
 
                 if ( count($lastPayments) === 3 ) {
