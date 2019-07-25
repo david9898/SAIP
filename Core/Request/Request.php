@@ -10,8 +10,8 @@ class Request implements RequestInterface
 
     public function __construct()
     {
-        $this->get  = $_GET;
-        $this->post = $_POST;
+        $this->get  = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+        $this->post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
     }
 
     public function getPOST(): array

@@ -1,7 +1,7 @@
 $(document).ready(async () => {
     sessionStorage.setItem('listClients', 20)
 
-    let clientTemplate = await $.get(baseUrl + 'Public/templatesHbs/clientTemplate.hbs')
+    let clientTemplate = await $.get(baseUrl + 'templates/clientTemplate.hbs')
     onScroll(clientTemplate)
     searchFriends(clientTemplate)
     seeClient()

@@ -23,7 +23,7 @@ abstract class AbstractController
 
     protected function redirect($url)
     {
-        $baseUrl = 'http://localhost:82/Network_Project';
+        $baseUrl = 'http://localhost:82/Network_project';
 
         header("Location: " . $baseUrl . $url);
 

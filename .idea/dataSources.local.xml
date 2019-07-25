@@ -1,32 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="MySQL - @localhost" uuid="9c0a5112-e07b-424f-981f-24be95886f0a">
-      <database-info product="MySQL" version="5.7.17" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )" dbms="MYSQL" exact-version="5.7.17">
-        <extra-name-characters>#@</extra-name-characters>
-        <identifier-quote-string>`</identifier-quote-string>
-      </database-info>
-      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="upper" />
-      <secret-storage>master_key</secret-storage>
-      <user-name>jetbrains</user-name>
-      <introspection-schemas>*:jetbrains</introspection-schemas>
-      <resolve-scope>*:phpstorm</resolve-scope>
-      <unqualified-resolve-schemas>*:phpstorm</unqualified-resolve-schemas>
-    </data-source>
-    <data-source name="@localhost" uuid="4a110aa3-dc6a-4fd7-8d39-2a5364abe196">
+    <data-source name="MariaDB - network_controll@localhost" uuid="b7a769ec-5b14-46b5-b56a-90ca8d0433f7">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MARIADB" exact-version="0" />
       <secret-storage>master_key</secret-storage>
       <user-name>root</user-name>
-    </data-source>
-    <data-source name="network_controll@localhost" uuid="663234c3-543c-47c3-ac46-e2c48fc11af7">
-      <database-info product="MariaDB" version="10.1.35-MariaDB" jdbc-version="4.2" driver-name="MariaDB Connector/J" driver-version="2.4.1" dbms="MARIADB" exact-version="10.1.35" exact-driver-version="2.4">
-        <extra-name-characters>#@</extra-name-characters>
-        <identifier-quote-string>`</identifier-quote-string>
-      </database-info>
-      <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower" />
-      <secret-storage>master_key</secret-storage>
-      <user-name>root</user-name>
-      <introspection-schemas>*:@</introspection-schemas>
     </data-source>
   </component>
 </project>

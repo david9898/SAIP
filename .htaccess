@@ -1,6 +1,12 @@
 <IfModule mod_rewrite.c>
 
     RewriteEngine On
+
+    RewriteRule ^styles/(.*)$ Public/css/$1 [L]
+    RewriteRule ^scripts/(.*)$ Public/js/$1 [L]
+    RewriteRule ^images/(.*)$ Public/uploads/$1 [L]
+    RewriteRule ^templates/(.*)$ Public/templatesHbs/$1 [L]
+
     RewriteCond %{REQUEST_URI} !/node_modules
     RewriteCond %{REQUEST_URI} !/Public
     RewriteCond %{REQUEST_FILENAME}  -f [OR]

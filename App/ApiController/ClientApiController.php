@@ -79,6 +79,24 @@ class ClientApiController extends AbstractController
                     $responce['status'] = 'success';
 
                     foreach ($clients as $client) {
+                        if ( $client['paid'] !== null ) {
+                            $diffTime = $client['paid'] - time();
+                            $client['paid'] = floor($diffTime / 86400);
+
+                            if ( $diffTime > 0 ) {
+                                $client['payment'] = 'paid';
+                            }
+
+                            if ( $diffTime < -7905600 ) {
+                                $client['payment'] = 'delay';
+                                $client['paid']    = -91;
+                            }
+
+                            if ( $diffTime > -7905600 && $diffTime <= 0 ) {
+                                $client['payment'] = 'overdue';
+                            }
+                        }
+
                         $responce['clients'][] = $client;
                     }
 
@@ -90,8 +108,26 @@ class ClientApiController extends AbstractController
                 $responce = [];
                 $responce['status'] = 'success';
                 $clients = $clientRepo->getMoreClients($firstResult);
-                foreach ($clients as $item) {
-                    $responce['clients'][] = $item;
+                foreach ($clients as $client) {
+                    if ( $client['paid'] !== null ) {
+                        $diffTime = $client['paid'] - time();
+                        $client['paid'] = floor($diffTime / 86400);
+
+                        if ( $diffTime > 0 ) {
+                            $client['payment'] = 'paid';
+                        }
+
+                        if ( $diffTime < -7905600 ) {
+                            $client['payment'] = 'delay';
+                            $client['paid']    = -91;
+                        }
+
+                        if ( $diffTime > -7905600 && $diffTime <= 0 ) {
+                            $client['payment'] = 'overdue';
+                        }
+                    }
+
+                    $responce['clients'][] = $client;
                 }
                 return $this->jsonResponce($responce);
             }

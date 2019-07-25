@@ -32,10 +32,18 @@ class StaffController extends AbstractController
             if ( $staffService->login($staffRepo, $request->getPOST()) ) {
                 $this->redirect('/clients');
             }else {
-                $this->baseRender('Staff/loginTemplate.php');
+                $csrfToken = $this->generateCsrfToken();
+
+                $this->baseRender('Staff/loginTemplate.php', [
+                    'çsrf_token' => $csrfToken
+                ]);
             }
         }else {
-            $this->baseRender('Staff/loginTemplate.php');
+            $csrfToken = $this->generateCsrfToken();
+
+            $this->baseRender('Staff/loginTemplate.php', [
+                'çsrf_token' => $csrfToken
+            ]);
         }
     }
 
@@ -67,8 +75,8 @@ class StaffController extends AbstractController
 
                 $this->render('Staff/registerStaff.php', [
                     'css' => [
-                        'Public/css/header.css',
-                        'Public/css/addStaff.css'
+                        'styles/header.css',
+                        'styles/addStaff.css'
                     ],
                     'csrf_token' => $csrfToken
                 ]);
@@ -78,8 +86,8 @@ class StaffController extends AbstractController
 
             $this->render('Staff/registerStaff.php', [
                 'css' => [
-                    'Public/css/header.css',
-                    'Public/css/addStaff.css'
+                    'styles/header.css',
+                    'styles/addStaff.css'
                 ],
                 'csrf_token' => $csrfToken
             ]);
@@ -103,8 +111,8 @@ class StaffController extends AbstractController
 
                 $this->render('Staff/addAbonamentTemplate.php', [
                     'css' => [
-                        'Public/css/header.css',
-                        'Public/css/addAbonament.css'
+                        'styles/header.css',
+                        'styles/addAbonament.css'
                     ],
                     'csrf_token' => $csrfToken
                 ]);
@@ -114,8 +122,8 @@ class StaffController extends AbstractController
 
             $this->render('Staff/addAbonamentTemplate.php', [
                 'css' => [
-                    'Public/css/header.css',
-                    'Public/css/addAbonament.css'
+                    'styles/header.css',
+                    'styles/addAbonament.css'
                 ],
                 'csrf_token' => $csrfToken
             ]);
@@ -140,8 +148,8 @@ class StaffController extends AbstractController
 
                 $this->render('Staff/addStreetTemplate.php', [
                     'css' => [
-                        'Public/css/header.css',
-                        'Public/css/addAbonament.css'
+                        'styles/header.css',
+                        'styles/addAbonament.css'
                     ],
                     'towns' => $townRepo->getTowns(),
                     'csrf_token' => $csrfToken
@@ -153,8 +161,8 @@ class StaffController extends AbstractController
 
             $this->render('Staff/addStreetTemplate.php', [
                'css' => [
-                   'Public/css/header.css',
-                   'Public/css/addAbonament.css'
+                   'styles/header.css',
+                   'styles/addAbonament.css'
                 ],
                 'towns'      => $townRepo->getTowns(),
                 'csrf_token' => $csrfToken

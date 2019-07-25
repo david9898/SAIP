@@ -10,7 +10,7 @@
     <div class="client-data">
         <div class="client_info">
             <div class="client_info_first">
-                <div><img src="Public/uploads/basicImages/User.png"></div>
+                <div><img src="images/basicImages/User.png"></div>
                 <p>Име: <?= $client->getFirstName() ?></p>
                 <p>Фамилия: <?= $client->getLastName() ?></p>
                 <p>Абонамент: <?= $client->getAbonament() ?></p>

@@ -1,1 +1,1 @@
-<img src="Public/uploads/exeptionUploads/AccessDeny.jpg"/>
+<img src="images/exeptionUploads/AccessDeny.jpg"/>

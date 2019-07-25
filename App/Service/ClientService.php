@@ -15,6 +15,7 @@ use Core\DataBinder\DataBinder;
 use Core\Exception\ValidationExeption;
 use Core\Request\Request;
 use Core\Session\Session;
+use Core\Validation\Validator;
 
 class ClientService implements ClientServiceInterface
 {
@@ -70,9 +71,25 @@ class ClientService implements ClientServiceInterface
                     $client->setDescription(null);
                 }
 
-                $isAdd = $clientRepo->addClient($client);
+                Validator::validateInt($client->getStreetNumber());
+                Validator::validateInt($client->getAbonament());
+                Validator::validateInt($client->getDateRegister());
+                Validator::validateInt($client->getTown());
+                Validator::validateInt($client->getStreet());
+                Validator::validateBgCharacters($client->getFirstName());
+                Validator::validateBgCharacters($client->getLastName());
+                Validator::validateEmail($client->getEmail());
+                Validator::validatePhone($client->getPhone());
 
-                if ( $isAdd ) {
+                if ( $client->getDescription() !== null ) {
+                    Validator::validateBgCharacters($client->getDescription());
+                }
+
+                if ( $client->getNeighborhood() !== null ) {
+                    Validator::validateInt($client->getNeighborhood());
+                }
+
+                if ( $clientRepo->addClient($client) ) {
                     $session->addFlashMessage('success', 'Успешно добавихте нов клиент');
                     return ['status' => 'success'];
                 }
@@ -123,47 +140,58 @@ class ClientService implements ClientServiceInterface
     public function addPayment(Request $request, PaymentRepositoryInterface $paymentRepo,
                                 ClientRepositoryInterface $clientRepo): array
     {
-        $postArr = json_decode($request->getContent(), true);
-        $session = new Session();
+        try {
+            $postArr = json_decode($request->getContent(), true);
+            $session = new Session();
 
-        if ($session->get('csrf_token') === $postArr['csrf_token']) {
-            $clientAbonamentPrice = $clientRepo->getClientAbonamentPrice($postArr['client'])->getSum();
+            if ($session->get('csrf_token') === $postArr['csrf_token']) {
+                $clientAbonamentPrice = $clientRepo->getClientAbonamentPrice($postArr['client'])->getSum();
 
-            for ($i = 0; $i < $postArr['bills']; $i++) {
-                $paymentDTO = new PaymentDTO();
+                for ($i = 0; $i < $postArr['bills']; $i++) {
+                    $paymentDTO = new PaymentDTO();
 
-                /** @var PaymentDTO $payment */
-                $payment = DataBinder::bindData($postArr, $paymentDTO);
+                    /** @var PaymentDTO $payment */
+                    $payment = DataBinder::bindData($postArr, $paymentDTO);
 
-                $lastPayment = $paymentRepo->getLastPayment($payment->getClient());
+                    $lastPayment = $paymentRepo->getLastPayment($payment->getClient());
 
-                if ($lastPayment !== null) {
-                    $lastPayment = $lastPayment->getEndTime();
+                    if ($lastPayment !== null) {
+                        $lastPayment = $lastPayment->getEndTime();
 
-                    if ( (time() - $lastPayment) > 7905600 ) {
-                        $endTime = $lastPayment + (time() - ($lastPayment + 7905600));
-                        $payment->setStartTime($lastPayment);
-                        $payment->setEndTime($endTime + 2635200);
-                    }else {
-                        $payment->setStartTime($lastPayment);
-                        $payment->setEndTime($lastPayment + 2635200);
+                        if ((time() - $lastPayment) > 7905600) {
+                            $endTime = $lastPayment + (time() - ($lastPayment + 7905600));
+                            $payment->setStartTime($lastPayment);
+                            $payment->setEndTime($endTime + 2635200);
+                        } else {
+                            $payment->setStartTime($lastPayment);
+                            $payment->setEndTime($lastPayment + 2635200);
+                        }
+
+                    } else {
+                        $payment->setStartTime(time());
+
+                        $payment->setEndTime(time() + 2635200);
                     }
 
-                } else {
-                    $payment->setStartTime(time());
+                    $payment->setSum($clientAbonamentPrice);
+                    $payment->setOperator($session->get('userData')['id']);
 
-                    $payment->setEndTime(time() + 2635200);
+                    Validator::validateInt($payment->getTime());
+                    Validator::validateInt($payment->getStartTime());
+                    Validator::validateInt($payment->getEndTime());
+                    Validator::validateInt($payment->getClient());
+                    Validator::validateInt($payment->getOperator());
+                    Validator::validateInt($payment->getSum());
+
+                    $paymentRepo->addPayment($payment);
                 }
 
-                $payment->setSum($clientAbonamentPrice);
-                $payment->setOperator($session->get('userData')['id']);
-
-                $paymentRepo->addPayment($payment);
+                return ['status' => 'success'];
+            } else {
+                return ['status' => 'error', 'description' => 'Грешен токен'];
             }
-
-            return ['status' => 'success'];
-        }else {
-            return ['status' => 'error', 'description' => 'Грешен токен'];
+        }catch (ValidationExeption $exception) {
+            return ['status' => 'error', 'description' => $exception->getMessage()];
         }
     }
 

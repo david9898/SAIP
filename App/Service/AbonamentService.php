@@ -7,35 +7,51 @@ namespace App\Service;
 use App\DTO\AbonamentDTO;
 use App\Repository\AbonamentRepositoryInterface;
 use Core\DataBinder\DataBinder;
+use Core\Exception\ValidationExeption;
 use Core\Session\Session;
+use Core\Validation\Validator;
 
 class AbonamentService implements AbonamentServiceInterface
 {
 
     public function addAbonament(AbonamentRepositoryInterface $abonamentRepository, $postArr): bool
     {
-        $session = new Session();
+        try {
+            $session = new Session();
 
-        if ( $session->get('csrf_token') === $postArr['csrf_token'] ) {
-            $abonament    = new AbonamentDTO();
+            if ($session->get('csrf_token') === $postArr['csrf_token']) {
+                $abonament = new AbonamentDTO();
 
-            $newAbonament = DataBinder::bindData($postArr, $abonament);
+                /** @var AbonamentDTO $newAbonament */
+                $newAbonament = DataBinder::bindData($postArr, $abonament);
 
-            $isAbonament = $abonamentRepository->checkIfAbonamentExist($newAbonament->getName());
+                Validator::validateBgCharacters($newAbonament->getName());
+                Validator::validateInt($newAbonament->getPrice());
 
-            if ($isAbonament === null) {
-                $abonamentRepository->addAbonament($newAbonament);
+                if ( $newAbonament->getDescription() !== '' ) {
+                    Validator::validateBgCharacters($newAbonament->getDescription());
+                }
 
-                $session->addFlashMessage('success', 'Успешно добавен нов абонамент!');
+                $isAbonament = $abonamentRepository->checkIfAbonamentExist($newAbonament->getName());
 
-                return true;
+                if ($isAbonament === null) {
+                    $abonamentRepository->addAbonament($newAbonament);
+
+                    $session->addFlashMessage('success', 'Успешно добавен нов абонамент!');
+
+                    return true;
+                } else {
+                    $session->addFlashMessage('error', 'Абонамент с такова име вече съществува!');
+
+                    return false;
+                }
             } else {
-                $session->addFlashMessage('error', 'Абонамент с такова име вече съществува!');
+                $session->addFlashMessage('error', 'Грешен токен!');
 
                 return false;
             }
-        }else {
-            $session->addFlashMessage('error', 'Грешен токен!');
+        }catch (ValidationExeption $exception) {
+            $session->addFlashMessage('error', $exception->getMessage());
 
             return false;
         }

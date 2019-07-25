@@ -2,9 +2,7 @@
 
 namespace App\DTO;
 
-use Core\Validation\Validator;
-
-class ClientDTO extends Validator
+class ClientDTO
 {
     private $id;
     private $town;
@@ -60,9 +58,7 @@ class ClientDTO extends Validator
      */
     public function setTown($town)
     {
-        if ( $this->notEmpty($town) ) {
-            $this->town = htmlspecialchars($town);
-        }
+       $this->town = htmlspecialchars($town);
     }
 
     /**
@@ -78,9 +74,7 @@ class ClientDTO extends Validator
      */
     public function setAbonament($abonament)
     {
-        if ( $this->notEmpty($abonament) ) {
-            $this->abonament = $abonament;
-        }
+        $this->abonament = htmlspecialchars($abonament);
     }
 
     /**
@@ -96,9 +90,8 @@ class ClientDTO extends Validator
      */
     public function setFirstName($firstName)
     {
-        if ( $this->notEmpty($firstName) ) {
-            $this->firstName = htmlspecialchars($firstName);
-        }
+        $this->firstName = htmlspecialchars($firstName);
+
     }
 
     /**
@@ -114,9 +107,8 @@ class ClientDTO extends Validator
      */
     public function setLastName($lastName)
     {
-        if ( $this->notEmpty($lastName) ) {
-            $this->lastName = htmlspecialchars($lastName);
-        }
+        $this->lastName = htmlspecialchars($lastName);
+
     }
 
     /**
@@ -132,9 +124,7 @@ class ClientDTO extends Validator
      */
     public function setPhone($phone)
     {
-        if ( $this->notEmpty($phone) ) {
-            $this->phone = htmlspecialchars($phone);
-        }
+        $this->phone = htmlspecialchars($phone);
     }
 
     /**
@@ -150,9 +140,7 @@ class ClientDTO extends Validator
      */
     public function setEmail($email)
     {
-        if ( $this->validateEmail($email) ) {
-            $this->email = htmlspecialchars($email);
-        }
+        $this->email = htmlspecialchars($email);
     }
 
     /**
@@ -168,9 +156,7 @@ class ClientDTO extends Validator
      */
     public function setStreet($street)
     {
-        if ( $this->notEmpty($street) ) {
-            $this->street = $street;
-        }
+        $this->street = htmlspecialchars($street);
     }
 
     /**
@@ -210,7 +196,7 @@ class ClientDTO extends Validator
      */
     public function setDescription($description)
     {
-        $this->description = htmlspecialchars($description);
+        $this->description = $description;
     }
 
     /**
@@ -226,25 +212,7 @@ class ClientDTO extends Validator
      */
     public function setStreetNumber($streetNumber)
     {
-        if ( $this->notEmpty($streetNumber) ) {
-            $this->streetNumber = htmlspecialchars($streetNumber);
-        }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPaid()
-    {
-        return $this->paid;
-    }
-
-    /**
-     * @param mixed $paid
-     */
-    public function setPaid($paid): void
-    {
-        $this->paid = $paid;
+        $this->streetNumber = htmlspecialchars($streetNumber);
     }
 
     /**
@@ -277,5 +245,21 @@ class ClientDTO extends Validator
     public function setRegister($register): void
     {
         $this->register = $register;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaid()
+    {
+        return $this->paid;
+    }
+
+    /**
+     * @param mixed $paid
+     */
+    public function setPaid($paid): void
+    {
+        $this->paid = $paid;
     }
 }

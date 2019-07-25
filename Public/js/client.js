@@ -190,7 +190,7 @@ function calculateTime() {
 }
 
 async function addNextPayment() {
-    let billTemplate       = await $.get(baseUrl + 'Public/templatesHbs/addBillTemplate.hbs')
+    let billTemplate       = await $.get(baseUrl + 'templates/addBillTemplate.hbs')
 
     $('.add_bill_button').on('click', function (e) {
         e.preventDefault()

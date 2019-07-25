@@ -6,9 +6,9 @@ namespace Core\Validation;
 
 use Core\Exception\ValidationExeption;
 
-abstract class Validator
+class Validator
 {
-    protected function validateEmail(string $email)
+    public static function validateEmail(string $email)
     {
         if ( filter_var($email, FILTER_VALIDATE_EMAIL) ) {
             return true;
@@ -17,7 +17,7 @@ abstract class Validator
         throw new ValidationExeption('Имейла не е валиден');
     }
 
-    protected function validateMAC($mac)
+    public static function validateMAC($mac)
     {
         if ( filter_var($mac, FILTER_VALIDATE_MAC) ) {
             return true;
@@ -26,7 +26,7 @@ abstract class Validator
         throw new ValidationExeption('МАК адреса не е валиден');
     }
 
-    protected function validateIP($ip)
+    public static function validateIP($ip)
     {
         if ( filter_var($ip, FILTER_VALIDATE_IP) ) {
             return true;
@@ -35,23 +35,50 @@ abstract class Validator
         throw new ValidationExeption('ИП адреса не е валиден');
     }
 
-    protected function validateByRegex($string, $regex)
+    public static function validateByRegex($string, $regex)
     {
         if ( filter_var($string, FILTER_VALIDATE_REGEXP, array(
-            'options' => array("regexp" => $regex)
-        ))) {
+            'options' => array("regexp" => $regex))))
+        {
             return true;
         }
 
         throw new ValidationExeption('Полетата не отговарят на зададените критерии');
     }
 
-    protected function notEmpty($string)
+    public static function notEmpty($string)
     {
         if ( $string !== null && $string !== '' ) {
             return true;
         }
 
         throw new ValidationExeption('Полетата със звезда трябва да са попълнени');
+    }
+
+    public static function validateInt($num)
+    {
+        if ( filter_var($num, FILTER_VALIDATE_INT) ) {
+            return true;
+        }
+
+        throw new ValidationExeption('Невалидни данни!');
+    }
+
+    public static function validateBgCharacters($string)
+    {
+        if ( filter_var($string, FILTER_VALIDATE_REGEXP , ['options' => ['regexp' => '/[а-яА-Я]+/']]) ) {
+            return true;
+        }
+
+        throw new ValidationExeption('Позволени са само български букви!');
+    }
+
+    public static function validatePhone($string)
+    {
+        if ( filter_var($string, FILTER_VALIDATE_REGEXP , ['options' => ['regexp' => '/^[0-9]*$/']]) ) {
+            return true;
+        }
+
+        throw new ValidationExeption('Невалиден телефон!');
     }
 }

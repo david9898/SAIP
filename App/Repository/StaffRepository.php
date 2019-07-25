@@ -20,10 +20,11 @@ class StaffRepository  implements StaffRepositoryInterface
     {
         $sql = 'SELECT staff.id, username, password 
                 FROM staff
-                WHERE staff.username = ?';
+                WHERE staff.username = :username';
 
         return $this->db->prepare($sql)
-                        ->execute([$username])
+                        ->bindParam('username', $username, \PDO::PARAM_STR)
+                        ->execute()
                         ->fetchObject(StaffDTO::class)
                         ->current();
     }
@@ -31,11 +32,15 @@ class StaffRepository  implements StaffRepositoryInterface
     public function addCustomer(StaffDTO $customer): bool
     {
         $sql = 'INSERT INTO staff (first_name, last_name, username, password, phone)
-                VALUES (?, ?, ?, ?, ?)';
+                VALUES (:firstName, :lastName, :username, :password, :phone)';
 
         $this->db->prepare($sql)
-                ->execute([$customer->getFirstName(), $customer->getLastName(), $customer->getUsername(),
-                            $customer->getPassword(), $customer->getPhone()]);
+                ->bindParam('firstName', $customer->getFirstName(), \PDO::PARAM_STR)
+                ->bindParam('lastName', $customer->getLastName(), \PDO::PARAM_STR)
+                ->bindParam('username', $customer->getUsername(), \PDO::PARAM_STR)
+                ->bindParam('password', $customer->getPassword(), \PDO::PARAM_STR)
+                ->bindParam('phone', $customer->getPhone(), \PDO::PARAM_STR)
+                ->execute();
 
         return true;
     }

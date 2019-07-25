@@ -2,15 +2,7 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="a0e508f8-a658-4975-ba82-96d8aae9127a" name="vm" url="http://localhost">
-        <fileTransfer host="localhost" port="2022" rootFolder="/home/jetbrains/upload" accessType="SFTP" username="vagrant">
-          <advancedOptions>
-            <advancedOptions dataProtectionLevel="Private" />
-          </advancedOptions>
-          <option name="port" value="2022" />
-        </fileTransfer>
-      </webServer>
-      <webServer id="2cac4ddb-eb8f-419f-998b-4a56dbad4b8d" name="linda" url="http://linda.itn.bg">
+      <webServer id="b6d4a7c2-0fa3-4ce9-ba72-725ed7b36c35" name="lindA" url="http://linda.itn.bg">
         <fileTransfer host="linda.itn.bg" port="2117" rootFolder="/linda/">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />

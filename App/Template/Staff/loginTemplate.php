@@ -1,7 +1,7 @@
 <script src="node_modules/jquery/dist/jquery.js"></script>
 <script src="node_modules/toastr/build/toastr.min.js"></script>
 <link href='https://fonts.googleapis.com/css?family=Ubuntu:500' rel='stylesheet' type='text/css'>
-<link href="Public/css/login.css" rel="stylesheet" type="text/css">
+<link href="styles/login.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="node_modules/toastr/build/toastr.min.css">
 
 <form method="POST">
@@ -15,6 +15,7 @@
             <h3>Password:</h3>
             <input type="password" name="password" placeholder="Password"/>
             <br>
+            <input type="hidden" name="csrf_token" value="<?= $data['çsrf_token'] ?>" />
             <input type="submit" name="login" value="Login" class="login-button"/>
         </div>
     </div>

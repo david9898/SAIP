@@ -44,7 +44,7 @@ $router->get('/client/add', function () {
     $clientController->addClient($db);
 });
 
-$router->get('/getTownStreets/{id}/{csrfToken}', function ($id, $csrfToken) {
+$router->get('/getTownStreets/{id:\d+}/{csrfToken:a}', function ($id, $csrfToken) {
    require_once 'Front Layer/start.php';
 
    $streetApiController = new \App\ApiController\StreetApiController();
@@ -65,14 +65,14 @@ $router->any('/login', function () {
     $staffController->login($db);
 });
 
-$router->get('/getMoreClients/{csrfToken}/{firstResult}', function ($csrfToken, $firstResult) {
+$router->get('/getMoreClients/{csrfToken:a}/{firstResult:\d+}', function ($csrfToken, $firstResult) {
     require_once 'Front Layer/start.php';
 
     $clientApi = new \App\ApiController\ClientApiController();
     $clientApi->getMoreClients($db, $csrfToken, $firstResult);
 });
 
-$router->get('searchFriends/{csrfToken}/{firstResult}/{pattern}?', function ($csrfToken, $firstResult, $pattern = null) {
+$router->get('searchFriends/{csrfToken:a}/{firstResult:\d+}/{pattern}?', function ($csrfToken, $firstResult, $pattern = null) {
     require_once 'Front Layer/start.php';
 
     $clientApi = new \App\ApiController\ClientApiController();
@@ -91,15 +91,11 @@ $router->any('/addStaff', function () {
     $staffController->registerStaff($db);
 });
 
-$router->get('/client/{id}', function ($id) {
+$router->get('/client/{id:\d+}', function ($id) {
    require_once 'Front Layer/start.php';
 
    $clientController = new \App\Controller\ClientController();
    $clientController->seeClient($db, $id);
-});
-
-$router->get('/updateBills', function () {
-   require_once 'BillSearchCommand.php';
 });
 
 $router->post('/addPayment', function () {
@@ -135,7 +131,7 @@ try {
     require_once 'App/Template/Exeptions/AccessDeny.php';
 }catch (\Core\Exception\ValidationExeption $exception) {
     require_once 'App/Template/Exeptions/SomethingWrong.php';
-}catch (PDOException $exception) {
+}catch (\PDOException $exception) {
     require_once 'App/Template/Exeptions/SomethingWrong.php';
 }catch (Exception $exception) {
     require_once 'App/Template/Exeptions/SomethingWrong.php';

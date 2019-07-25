@@ -1,1 +1,1 @@
-<img src="Public/uploads/exeptionUploads/SomethingWrong.jpg"/>
+<img src="images/exeptionUploads/SomethingWrong.jpg"/>

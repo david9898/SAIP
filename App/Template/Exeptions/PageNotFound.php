@@ -1,1 +1,1 @@
-<img src="Public/uploads/exeptionUploads/PageNotFound.jpg">
+<img src="images/exeptionUploads/PageNotFound.jpg">

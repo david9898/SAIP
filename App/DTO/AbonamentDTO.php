@@ -4,6 +4,8 @@
 namespace App\DTO;
 
 
+use Core\Validation\Validator;
+
 class AbonamentDTO
 {
     private $id;

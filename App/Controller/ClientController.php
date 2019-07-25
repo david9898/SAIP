@@ -26,12 +26,12 @@ class ClientController extends AbstractController
 
         $this->render('Clients/clientsPaginationTemplate.php', [
             'css' => [
-                'Public/css/clients.css',
-                'Public/css/header.css'
+                'styles/clients.css',
+                'styles/header.css'
             ],
             'js'  => [
                 'node_modules/handlebars/dist/handlebars.min.js',
-                'Public/js/clients.js'
+                'scripts/clients.js'
             ],
             'clients'    => $clients,
             'csrf_token' => $csrfToken
@@ -52,13 +52,13 @@ class ClientController extends AbstractController
         $this->render('Clients/addClient.php', [
             'css'        => [
                 'node_modules/easy-autocomplete/dist/easy-autocomplete.min.css',
-                'Public/css/header.css',
-                'Public/css/addClient.css',
+                'styles/header.css',
+                'styles/addClient.css',
             ],
             'js'         => [
                 'node_modules/easy-autocomplete/dist/jquery.easy-autocomplete.min.js',
                 'node_modules/sweetalert/dist/sweetalert.min.js',
-                'Public/js/addClient.js'
+                'scripts/addClient.js'
             ],
             'towns'      => $towns,
             'abonaments' => $abonaments,
@@ -79,15 +79,15 @@ class ClientController extends AbstractController
 
         $this->render('Clients/clientTemplate.php', [
             'css'        => [
-                'Public/css/header.css',
-                'Public/css/addStaff.css',
-                'Public/css/client.css'
+                'styles/header.css',
+                'styles/addStaff.css',
+                'styles/client.css'
             ],
             'js'         => [
                 'node_modules/moment/min/moment-with-locales.min.js',
                 'node_modules/handlebars/dist/handlebars.min.js',
                 'node_modules/sweetalert/dist/sweetalert.min.js',
-                'Public/js/client.js'
+                'scripts/client.js'
             ],
             'client'     => $client,
             'bills'      => $clientService->calculateBills($paymentRepo, $id),
