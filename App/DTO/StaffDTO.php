@@ -16,7 +16,9 @@ class StaffDTO
 
     public function __construct()
     {
-        $this->roles = [];
+        if ( $this->roles === null ) {
+            $this->roles = [];
+        }
     }
 
     /**
@@ -136,4 +138,19 @@ class StaffDTO
     {
         $this->roles[] = $role;
     }
+
+    public function getApiResponce()
+    {
+        $arr              = [];
+        $arr['id']        = $this->id;
+        $arr['firstName'] = $this->firstName;
+        $arr['lastName']  = $this->lastName;
+        $arr['phone']     = $this->phone;
+        $arr['password']  = $this->password;
+        $arr['username']  = $this->username;
+        $arr['roles']     = $this->roles;
+
+        return $arr;
+    }
+
 }

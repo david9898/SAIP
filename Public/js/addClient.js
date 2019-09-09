@@ -1,6 +1,7 @@
 $(document).ready(() => {
     getStreets()
     addClient()
+    getIncomePrice()
 })
 
 function getStreets() {
@@ -78,6 +79,7 @@ function addClient() {
         let neighborhood = $('.neighborhood').val()
         let description  = $('.description').val()
         let streetNumber = $('.street_number').val()
+        let creditLimit  = $('.credit_limit').val()
         let csrf_token   = $('.csrf_token').val()
 
         if ( neighborhood === '' ) {
@@ -104,15 +106,15 @@ function addClient() {
                 'neighborhood': neighborhood,
                 'description': description,
                 'street_number': streetNumber,
+                'credit_limit': creditLimit,
                 'csrf_token': csrf_token
             }
 
             $.ajax({
                 url: baseUrl + 'addClient',
                 type: 'POST',
-                data: obj,
+                data: {body: JSON.stringify(obj)},
             }).then((res) => {
-                console.log(res)
                 let responce = JSON.parse(res)
 
                 if ( responce['status'] === 'success' ) {
@@ -121,6 +123,26 @@ function addClient() {
                     toastr.error(responce['description'])
                 }
             })
+        })
+    })
+}
+
+function getIncomePrice() {
+    $('#abonament').on('change', function () {
+        let abonamentId = $(this).val()
+        let csrfToken   = $('.csrf_token').val()
+
+        $.ajax({
+            url: baseUrl + 'getIncomeAccount/' + abonamentId + '/' + csrfToken,
+            type: 'GET'
+        }).then((res) => {
+            let responce = JSON.parse(res)
+
+            if ( responce['status'] === 'success' ) {
+                console.log(responce)
+            }else {
+                toastr.error(responce['description'])
+            }
         })
     })
 }

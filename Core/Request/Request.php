@@ -7,11 +7,21 @@ class Request implements RequestInterface
 {
     private $get;
     private $post;
+    private $cookie;
+    private $server;
 
     public function __construct()
     {
-        $this->get  = filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
-        $this->post = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $this->server = filter_input_array(INPUT_SERVER, FILTER_SANITIZE_STRING);
+        $this->cookie = filter_input_array(INPUT_COOKIE, FILTER_SANITIZE_STRING);
+
+        foreach ($_GET as $key => $item) {
+            $this->get[htmlspecialchars($key, ENT_NOQUOTES)] = htmlspecialchars($item, ENT_NOQUOTES);
+        }
+
+        foreach ($_POST as $key => $item) {
+            $this->post[htmlspecialchars($key, ENT_NOQUOTES)] = htmlspecialchars($item, ENT_NOQUOTES);
+        }
     }
 
     public function getPOST(): array
@@ -35,8 +45,12 @@ class Request implements RequestInterface
 
     public function getContent(): string
     {
-        $arr = array_keys($this->post);
+        if ( $this->server['REQUEST_METHOD'] === 'PUT' ) {
+            parse_str(file_get_contents("php://input"),$put_vars);
 
-        return $arr[0];
+            return $put_vars['body'];
+        }
+
+        return $this->post['body'];
     }
 }

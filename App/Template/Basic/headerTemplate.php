@@ -1,7 +1,7 @@
 <html>
 
     <head>
-        <base href="/Network_project/">
+        <base href="/">
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
@@ -31,7 +31,7 @@
                 <div class="dropdown">
                     <p>Админ панел</p>
                     <div class="start_panel">
-                        <a href="addStaff">Добави персонал</a>
+                        <a href="staff">Добави персонал</a>
                         <a href="addAbonament">Добави абонамент</a>
                         <a href="addStreet">Добави улица</a>
                         <a href="logout">Изход</a>
@@ -46,6 +46,7 @@
                     <a href="system"><li><i class="fab fa-audible"></i> Система</li></a>
                     <a href="clients"><li><i class="fas fa-users"></i> Клиенти</li></a>
                     <a href="network"><li><i class="fas fa-network-wired"></i> Мрежа</li></ul></a>
+                    <a href="showOldClients">Start klienti</a>
                 </ul>
             </aside>
 

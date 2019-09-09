@@ -6,12 +6,24 @@ error_reporting(E_ALL);
 
 spl_autoload_register
 (
-//    function( $class )
-//    {
-//        $explodeClass = explode('\\', $class);
-//
-//        require_once $explodeClass[0] . '/' . $explodeClass[1] . '/' .  $explodeClass[2] . '.php';
-//    }
+    function( $class )
+    {
+        $explodeClass = explode('\\', $class);
+
+        $string = '';
+
+        for ($i = 0;$i < count($explodeClass); $i++) {
+            $dir = $explodeClass[$i];
+
+            if  ( $i === 0 ) {
+                $string .= $dir;
+            }else {
+                $string = $string . '/' . $dir;
+            }
+        }
+
+        require_once $string . '.php';
+    }
 );
 
 require_once 'vendor/autoload.php';
@@ -19,10 +31,10 @@ require_once 'vendor/autoload.php';
 $router = new \Phroute\Phroute\RouteCollector(new \Phroute\Phroute\RouteParser());
 
 function processInput(){
-    $url = explode('/', $_SERVER['REQUEST_URI']);
+    $url = explode('/', htmlspecialchars($_SERVER['REQUEST_URI']));
 
     $string = '';
-    for ($i = 2; $i < count($url); $i++) {
+    for ($i = 0; $i < count($url); $i++) {
         $string = $string . '/' . $url[$i];
     }
 
@@ -65,11 +77,11 @@ $router->any('/login', function () {
     $staffController->login($db);
 });
 
-$router->get('/getMoreClients/{csrfToken:a}/{firstResult:\d+}', function ($csrfToken, $firstResult) {
+$router->get('/getClients/{csrfToken:a}/{firstResult:\d+}', function ($csrfToken, $firstResult) {
     require_once 'Front Layer/start.php';
 
     $clientApi = new \App\ApiController\ClientApiController();
-    $clientApi->getMoreClients($db, $csrfToken, $firstResult);
+    $clientApi->getClients($db, $csrfToken, $firstResult);
 });
 
 $router->get('searchFriends/{csrfToken:a}/{firstResult:\d+}/{pattern}?', function ($csrfToken, $firstResult, $pattern = null) {
@@ -84,7 +96,7 @@ $router->get('/logout', function () {
    $staffController->logout();
 });
 
-$router->any('/addStaff', function () {
+$router->any('/staff', function () {
     require_once 'Front Layer/start.php';
 
     $staffController = new \App\Controller\StaffController();
@@ -117,6 +129,72 @@ $router->any('/addStreet', function () {
 
     $staffController = new \App\Controller\StaffController();
     $staffController->addStreet($db);
+});
+
+$router->get('/getIncomeAccount/{abonamentId:\d+}/{csrfToken}', function ($abonamentId, $csrfToken) {
+    require_once 'Front Layer/start.php';
+
+    $clientApi = new \App\ApiController\ClientApiController();
+    $clientApi->getIncomeToAccount($db, $abonamentId, $csrfToken);
+});
+
+$router->post('/payInvoices', function () {
+    require_once 'Front Layer/start.php';
+
+    $clientApi = new \App\ApiController\ClientApiController();
+    $clientApi->payInvoices($db);
+});
+
+$router->post('/addStaff', function () {
+    require_once 'Front Layer/start.php';
+
+    $staffApi = new \App\ApiController\StaffApiController();
+    $staffApi->addStaff($db);
+});
+
+$router->get('/getOneCustomer/{customerId:\d+}/{csrfToken}', function ($customerId, $csrfToken) {
+    require_once 'Front Layer/start.php';
+
+    $staffApi = new \App\ApiController\StaffApiController();
+    $staffApi->getOneCustomer($db, $customerId, $csrfToken);
+});
+
+$router->put('/updateStaff', function () {
+    require_once 'Front Layer/start.php';
+
+    $staffApi = new \App\ApiController\StaffApiController();
+    $staffApi->updateStaff($db);
+});
+
+$router->put('/deleteStaff', function () {
+    require_once 'Front Layer/start.php';
+
+    $staffApi = new \App\ApiController\StaffApiController();
+    $staffApi->deleteStaff($db);
+});
+
+$router->get('/addInvoicesToAllClients', function () {
+    require_once 'Front Layer/start.php';
+
+    $clientRepo     = new \App\Repository\ClientRepository($db);
+    $invoiceRepo    = new \App\Repository\InvoiceRepository($db);
+    $invoiceService = new \App\Service\InvoiceService();
+
+    $invoiceService->addInvoicesToAllClients($invoiceRepo, $clientRepo);
+});
+
+$router->get('/showOldClients', function () {
+    require_once 'Front Layer/start.php';
+
+    $clientController = new \App\Controller\ClientController();
+    $clientController->getOldClients($db);
+});
+
+$router->any('/editOldClient/{id}', function ($id) {
+    require_once 'Front Layer/start.php';
+
+    $clientController = new \App\Controller\ClientController();
+    $clientController->editOldClient($db, $id);
 });
 
 $dispatcher =  new \Phroute\Phroute\Dispatcher($router->getData());

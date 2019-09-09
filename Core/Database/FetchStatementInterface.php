@@ -13,4 +13,6 @@ interface FetchStatementInterface
     public function fetchObject($className): \Generator;
 
     public function fetchAssoc(): \Generator;
+
+    public function fetchGroupObject($className, array $rows): \Generator;
 }

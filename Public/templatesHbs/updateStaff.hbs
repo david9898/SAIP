@@ -1,0 +1,29 @@
+<div class="edit_staff">
+    <form class="prevent_submit" method="POST">
+        <div class="form-style-5">
+            <form class="prevent_submit" method="POST">
+                <fieldset class="second_form_fieldset">
+                    <div>
+                        <legend><span class="number">1</span> Информация за служител </legend>
+                        <input type="text" name="first_name" class="first_name" placeholder="Име *" value="{{ firstName }}">
+                        <input type="text" name="last_name" class="last_name" placeholder="Фамилия *" value="{{ lastName }}">
+                        <input type="text" name="phone" class="phone" placeholder="Телефон *" value="{{ phone }}">
+                        <input type="text" name="username" class="username" placeholder="Потребителско име *" value="{{ username }}">
+                        <input type="password" name="password" class="password" placeholder="Парола *">
+                        <input type="password" name="repeat_password" class="repeat_password" placeholder="Повтори паролата *">
+
+                        <label for="role">Роля:</label>
+                        <select id="role" class="roles" multiple>
+                            <option selected value="none">-</option>
+                            {{# each roles }}
+                                <option value="{{ roleId }}">{{ roleName }}</option>
+                            {{/ each }}
+                        </select>
+                    </div>
+                </fieldset>
+                <input type="hidden" class="csrf_token" name="csrf_token" value="{{ csrf_token }}">
+                <input type="submit" class="update_staff" name="update_staff" value="Промени" />
+            </form>
+        </div>
+    </form>
+</div>

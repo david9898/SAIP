@@ -5,152 +5,144 @@ window.onload = function () {
 
     addNextPayment()
     addPayment()
-    makePaymentsToDates()
+    makeSecondsToDates()
     chooseBill()
-    billTo()
-    updateStartData()
     showPart()
     changePartView()
+    payInvoices()
+
 }
 
-function chooseBills(bills) {
-        let price      = document.getElementById('bills').getAttribute('price')
-        let lastTime   = document.getElementById('bills').getAttribute('lastTime')
-        let finalPrice = price * Number(bills)
+async function addNextPayment() {
+    let invoiceTemplate        = await $.get('templates/addBillTemplate.hbs')
+    let lastInvoiceTime        = $('.last_invoice_time').val().split('-')
+    let sum                    = $('.client_invoice_sum').toArray()
+    let realSum                = $(sum[sum.length - 1]).text()
 
-        calculateNextPayment(lastTime, Number(bills))
+    $('.add_invoice_btn').on('click', function () {
+        let year        = null
+        let month       = null
 
-        $('.final_price_bill').text('')
-        $('.final_price_bill').text(finalPrice)
-}
+        if ( lastInvoiceTime[1] < 12 ) {
+            year  = lastInvoiceTime[0]
+            month = Number(lastInvoiceTime[1])
+        }else {
+            year  = Number(lastInvoiceTime[0]) + 1
+            month = 0
+        }
 
-function addPayment() {
-    document.getElementById('addPayment').addEventListener('click', function (e) {
-        e.preventDefault()
+        let nextInvoiceDateDaysInMonth = new Date(year, Number(month) + 1, 0).getDate()
+        let start                      = new Date(year, month, 1)
+        let end                        = new Date(year, month, nextInvoiceDateDaysInMonth)
 
-        swal({
-            text: 'Сигурен ли сте че искате да направите плащането?',
-            buttons: ['Не', 'Да']
-        }).then((willDelete) => {
+        let obj = {
+            'start': moment(start.getTime()).format('LL'),
+            'end': moment(end.getTime()).format('LL'),
+            'sum': realSum,
+            'time': moment(new Date().getTime()).format('LL')
+        }
 
-            if ( willDelete ) {
-                if ( document.getElementById('bills').value <= 0 ) {
-                    toastr.error('Трябва да изберете поне една сметка')
-                    return
-                }
+        let template = Handlebars.compile(invoiceTemplate)
+        let html     = template(obj)
+        $('.bills_table tbody').append(html)
 
-                let pathArr = window.location.pathname.split('/')
-                let client = pathArr[pathArr.length - 1]
+        if ( lastInvoiceTime[1] < 11 ) {
+            year  = lastInvoiceTime[0]
+            month = Number(lastInvoiceTime[1]) + 1
+        }else {
+            year  = Number(lastInvoiceTime[0]) + 1
+            month = 0
+        }
 
-                let body = {
-                    'client': client,
-                    'bills': document.getElementById('bills').value,
-                    'csrf_token': document.getElementById('csrf_token').value
-                }
+        lastInvoiceTime[0] = year
+        lastInvoiceTime[1] = month
 
-                $.ajax({
-                    type: 'POST',
-                    url: baseUrl + 'addPayment',
-                    data: JSON.stringify(body)
-                }).then((res) => {
-                    let responce = JSON.parse(res)
-
-                    if ( responce['status'] === 'success' ) {
-                        toastr.success('Успешно направено плащане')
-                    }else {
-                        toastr.error(responce['description'])
-                    }
-                })
-            }
-        })
+        chooseBill()
+        makeInvoicesReady()
     })
 }
 
-function calculateNextPayment(lastTime, bills) {
-    let currentTime = Math.round(new Date() / 1000)
+function makeInvoicesReady() {
+    let invoices = $('.bills_table tbody tr').toArray()
 
-    if ( lastTime === 'none' ) {
-        lastTime = currentTime
-    }
+    for (let i = 0; i < invoices.length; i++) {
+        let currentInvoice = invoices[i]
 
-    let diffTime    = null
-    let nextPayment = null
-    let stopPayment = null
+        $(currentInvoice).removeClass('selected')
 
-    if ( Number(lastTime) >= currentTime ) {
-        diffTime = lastTime - currentTime
-
-        nextPayment = ((2635200 * bills) + diffTime) + Number(currentTime)
-        stopPayment = (((2635200 * bills) + diffTime) + Number(currentTime)) + 7905600
-
-        $('.next_payment').remove()
-        $('.stop_payment').remove()
-        $('.bills_form').append('<p class="next_payment">Следваща сметка на ' + moment(nextPayment * 1000).format('LL') + ' </p>')
-        $('.bills_form').append('<p class="stop_payment">Ще бъде спрян на ' + moment(stopPayment * 1000).format('LL') + ' </p>')
-    }else {
-        diffTime = Math.abs(currentTime - lastTime)
-
-        if ( diffTime <= 7905600 ) {
-            if (diffTime > 2635200 * bills) {
-                let diffInPayments = Math.abs(diffTime - (2635200 * bills))
-                let diffBills = Math.abs(currentTime - (Number(lastTime) + diffInPayments))
-                stopPayment = Math.abs(diffBills + 7905600 + Number(lastTime))
-
-                $('.next_payment').remove()
-                $('.stop_payment').remove()
-                $('.bills_form').append('<p class="stop_payment">Ще бъде спрян на ' + moment(stopPayment * 1000).format('LL') + ' </p>')
-            } else {
-                let diffToPayment = currentTime - Number(lastTime)
-                let billsTime = Math.abs(bills * 2635200)
-                let residue = billsTime - diffToPayment
-                nextPayment = residue + currentTime
-                stopPayment = residue + currentTime + 7905600
-
-                $('.next_payment').remove()
-                $('.stop_payment').remove()
-                $('.bills_form').append('<p class="next_payment">Следваща сметка на ' + moment(nextPayment * 1000).format('LL') + ' </p>')
-                $('.bills_form').append('<p class="stop_payment">Ще бъде спрян на ' + moment(stopPayment * 1000).format('LL') + ' </p>')
-            }
-        }else {
-            let add = diffTime - 7905600
-
-            if (diffTime > (2635200 * bills + add)) {
-                let diffInPayments = Math.abs(diffTime - (2635200 * bills))
-                let diffBills = Math.abs(currentTime - (Number(lastTime) + diffInPayments))
-                stopPayment = Math.abs(diffBills + 7905600 + Number(lastTime))
-
-                $('.next_payment').remove()
-                $('.stop_payment').remove()
-                $('.bills_form').append('<p class="stop_payment">Ще бъде спрян на ' + moment((stopPayment + add) * 1000).format('LL') + ' </p>')
-            } else {
-                let diffToPayment = currentTime - Number(lastTime)
-                let billsTime = Math.abs(bills * 2635200)
-                let residue = billsTime - diffToPayment
-                nextPayment = residue + currentTime
-                stopPayment = residue + currentTime + 7905600
-
-                $('.next_payment').remove()
-                $('.stop_payment').remove()
-                $('.bills_form').append('<p class="next_payment">Следваща сметка на ' + moment((nextPayment + add) * 1000).format('LL') + ' </p>')
-                $('.bills_form').append('<p class="stop_payment">Ще бъде спрян на ' + moment((stopPayment + add) * 1000).format('LL') + ' </p>')
-            }
+        if ( !$(currentInvoice).hasClass('active') ) {
+            $(currentInvoice).addClass('ready-payment')
         }
     }
 }
 
-function makePaymentsToDates() {
-    let starts = $('.start_payment').toArray()
-    let ends   = $('.end_payment').toArray()
+function addPayment() {
+    $('.add_payment').on('click', function () {
+        let numInvoices = $('.ready-payment').toArray().length
+        let csrfToken = $('#csrf_token').val()
+        let pathArr = window.location.pathname.split('/')
+        let client = pathArr[pathArr.length - 1]
 
-    for (let pay of starts) {
+        let body = {
+            'numInvoices': numInvoices,
+            'clientId': client,
+            'csrf_token': csrfToken
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: baseUrl + 'payInvoices',
+            data: {body: JSON.stringify(body)}
+        }).then((res) => {
+            let responce = JSON.parse(res)
+
+            if (responce['status'] === 'success') {
+                $('.ready-payment .unpaid_invoice').text(moment(responce['time'] * 1000).format('LL'))
+
+                let newInvoices = $('.ready-payment').toArray()
+                for (let i = 0; i < newInvoices.length; i++) {
+                    let currInvoice = newInvoices[i]
+
+                    $(currInvoice).removeClass('ready-payment')
+                    $(currInvoice).addClass('active')
+                }
+
+                $('#printing').printThis({
+                    afterPrint: function () {
+                        toastr.success('Успешно платихте фактурата')
+                        $('.second_level_payment').css('display', 'none')
+                        $('.add_payment').css('display', 'block')
+                        $('.bills_table').css('display', 'block')
+                        $('.add_invoices').css('display', 'block')
+                        $('#printing').empty()
+                        $('#printing').css('display', 'none')
+                    }
+                })
+            } else {
+                toastr.error(responce['description'])
+            }
+        })
+
+    })
+}
+
+
+
+function makeSecondsToDates() {
+    let seconds = $('.has_time').toArray()
+
+    for (let pay of seconds) {
+
         let time = $(pay).text()
+
+        if ( time === '' ) {
+            $(pay).text('-')
+            continue
+        }
+
         $(pay).text(moment(time * 1000).format('LL'))
     }
 
-    for (let pay of ends) {
-        let time = $(pay).text()
-        $(pay).text(moment(time * 1000).format('LL'))
-    }
 }
 
 function chooseBill() {
@@ -175,123 +167,46 @@ function chooseBill() {
                 break
             }
         }
-
-        calculateTime()
     })
-}
-
-function calculateTime() {
-    let activeBills = $('.ready-payment').toArray().length
-
-    chooseBills(activeBills)
-
-    document.getElementById('bills').value = activeBills
-
-}
-
-async function addNextPayment() {
-    let billTemplate       = await $.get(baseUrl + 'templates/addBillTemplate.hbs')
-
-    $('.add_bill_button').on('click', function (e) {
-        e.preventDefault()
-
-        let lastTime     = $('.last_bill_to').attr('last_bill_to')
-
-        if ( lastTime === undefined ) {
-            lastTime  = $('#bills').attr('lastTime')
-            let price = $('#bills').attr('price')
-
-            renderBill(billTemplate, lastTime, price)
-
-            return
-        }else {
-            lastTime = Number(lastTime)
-        }
-        $('.last_bill_to').removeClass('last_bill_to')
-        let currentTime  = Math.round(new Date() / 1000)
-        let price        = $('#bills').attr('price')
-
-        if ( Number(lastTime) - Number(currentTime) >= 0 ) {
-
-            renderBill(billTemplate, lastTime, price)
-
-        }else {
-            if ( currentTime - lastTime >= 7905600 ) {
-
-                renderBill(billTemplate, currentTime, price)
-
-            }else {
-                lastTime = new Date() / 1000
-
-                renderBill(billTemplate, lastTime, price)
-            }
-        }
-    })
-}
-
-function renderBill(billTemplate, lastTime, price) {
-    lastTime = Number(lastTime)
-
-    let obj = {
-        'start': moment(lastTime * 1000).format('LL'),
-        'end': moment(lastTime * 1000).add(2635200, 'seconds').format('LL'),
-        'sum': price,
-        'endSeconds': lastTime + 2635200
-    }
-
-    let template = Handlebars.compile(billTemplate)
-    let html     = template(obj)
-    $('.bills_table tbody').append(html)
-
-    let arr = $('.bills_table tbody tr').toArray()
-
-    for (let i = 0; i < arr.length; i++) {
-        let currentBill = arr[i]
-
-        if ( !$(currentBill).hasClass('active') ) {
-            $(currentBill).addClass('ready-payment')
-        }
-    }
-
-    chooseBill()
-    calculateTime()
-}
-
-function billTo() {
-    let paidToSeconds = Number($('.paid_to').text())
-
-    $('.paid_to').text(moment(paidToSeconds * 1000).format('LL'))
-}
-
-function updateStartData() {
-    let register    = $('.date_register').text()
-    let currentTime = Math.abs(new Date() / 1000)
-    let lastTime    = document.getElementById('bills').getAttribute('lastTime')
-
-    $('.date_register').text(moment(register * 1000).format('LL'))
-
-    if ( lastTime > currentTime ) {
-        $('.client_info_first').append('<p>Статус: Платил</p>')
-    }else {
-        if ( currentTime - lastTime >= 7905600 ) {
-            $('.client_info_first').append('<p>Статус: Спрян</p>')
-        }else {
-            $('.client_info_first').append('<p>Статус: Просрочен</p>')
-        }
-    }
 }
 
 function showPart() {
     let part = sessionStorage.getItem('client-part')
 
     if ( part === 'info' ) {
-        $('.add_payment').css('display', 'none')
+        $('.client_account_status').css('display', 'none')
+        $('.client_invoices').css('display', 'none')
+        $('.client_payments').css('display', 'none')
         $('.client_info').css('display', 'block')
+
+        return
     }
 
     if ( part === 'payments' ) {
+        $('.client_account_status').css('display', 'none')
+        $('.client_invoices').css('display', 'none')
         $('.client_info').css('display', 'none')
-        $('.add_payment').css('display', 'block')
+        $('.client_payments').css('display', 'block')
+
+        return
+    }
+
+    if ( part === 'invoices' ) {
+        $('.client_account_status').css('display', 'none')
+        $('.client_info').css('display', 'none')
+        $('.client_payments').css('display', 'none')
+        $('.client_invoices').css('display', 'block')
+
+        return
+    }
+
+    if ( part === 'statement' ) {
+        $('.client_info').css('display', 'none')
+        $('.client_payments').css('display', 'none')
+        $('.client_invoices').css('display', 'none')
+        $('.client_account_status').css('display', 'block')
+
+        return
     }
 }
 
@@ -301,8 +216,12 @@ function changePartView() {
 
         $(this).removeClass('unselected-part-view')
         $(this).addClass('selected-part-view')
+        $('.client-invoices-btn').removeClass('selected-part-view')
+        $('.client-invoices-btn').addClass('unselected-part-view')
         $('.client-payment-btn').removeClass('selected-part-view')
         $('.client-payment-btn').addClass('unselected-part-view')
+        $('.client-statement-btn').removeClass('selected-part-view')
+        $('.client-statement-btn').addClass('unselected-part-view')
 
         showPart()
     })
@@ -314,7 +233,85 @@ function changePartView() {
         $(this).addClass('selected-part-view')
         $('.client-info-btn').removeClass('selected-part-view')
         $('.client-info-btn').addClass('unselected-part-view')
+        $('.client-invoices-btn').removeClass('selected-part-view')
+        $('.client-invoices-btn').addClass('unselected-part-view')
+        $('.client-statement-btn').removeClass('selected-part-view')
+        $('.client-statement-btn').addClass('unselected-part-view')
+
+        showPart()
+    })
+
+    $('.client-invoices-btn').on('click', function () {
+        sessionStorage.setItem('client-part', 'invoices')
+
+        $(this).removeClass('unselected-part-view')
+        $(this).addClass('selected-part-view')
+        $('.client-info-btn').removeClass('selected-part-view')
+        $('.client-info-btn').addClass('unselected-part-view')
+        $('.client-payment-btn').removeClass('selected-part-view')
+        $('.client-payment-btn').addClass('unselected-part-view')
+        $('.client-statement-btn').removeClass('selected-part-view')
+        $('.client-statement-btn').addClass('unselected-part-view')
+
+        showPart()
+    })
+
+    $('.client-statement-btn').on('click', function () {
+        sessionStorage.setItem('client-part', 'statement')
+
+        $(this).removeClass('unselected-part-view')
+        $(this).addClass('selected-part-view')
+        $('.client-info-btn').removeClass('selected-part-view')
+        $('.client-info-btn').addClass('unselected-part-view')
+        $('.client-payment-btn').removeClass('selected-part-view')
+        $('.client-payment-btn').addClass('unselected-part-view')
+        $('.client-invoices-btn').removeClass('selected-part-view')
+        $('.client-invoices-btn').addClass('unselected-part-view')
 
         showPart()
     })
 }
+
+async function payInvoices() {
+    let printTemplate = await $.get('templates/printTemplate.hbs')
+
+    $('.add_invoices').on('click', function () {
+        $('.client_invoices .bills_table').css('display', 'none')
+        $('.client_invoices #printing').css('dispplay', 'block')
+        let name         = $('.first_name').text() + ' ' + $('.last_name').text()
+        let price        = $('.client_invoice_sum').toArray()[0].textContent
+        let timePayment  = moment(new Date().getTime()).format('LL')
+        let readyPayment = $('.ready-payment').toArray()[$('.ready-payment').toArray().length - 1]
+        let endPayment   = $(readyPayment).children('.end_time').text()
+        let address      = $('.address').text()
+        let numInvoices  = $('.ready-payment').toArray().length
+
+        let data = {
+            'name': name,
+            'price': Number(price) * Number(numInvoices),
+            'timePayment': timePayment,
+            'timeToEnd': endPayment,
+            'address': address
+        }
+
+        $('#printing').css('display', 'block')
+
+        $(this).css('display', 'none')
+        $('.second_level_payment').css('display', 'flex')
+
+        $('.refuse_invoices').on('click', function () {
+            $('.second_level_payment').css('display', 'none')
+            $('#printing').css('display', 'none')
+            $('.add_payment').css('display', 'block')
+            $('.bills_table').css('display', 'block')
+            $('.add_invoices').css('display', 'block')
+            $('#printing').empty()
+        })
+
+        let template = Handlebars.compile(printTemplate)
+        let html     = template(data)
+        $('#printing').append(html)
+    })
+
+}
+

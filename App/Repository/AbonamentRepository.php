@@ -50,4 +50,15 @@ class AbonamentRepository implements AbonamentRepositoryInterface
         return true;
     }
 
+    public function getAbonamentPrice($id): AbonamentDTO
+    {
+        $sql = 'SELECT price FROM abonaments WHERE id = :id';
+
+        return $this->db->prepare($sql)
+                        ->bindParam('id', $id, \PDO::PARAM_INT)
+                        ->execute()
+                        ->fetchObject(AbonamentDTO::class)
+                        ->current();
+    }
+
 }

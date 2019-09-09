@@ -19,6 +19,11 @@ class ClientDTO
     private $paid;
     private $sum;
     private $register;
+    private $creditLimit;
+    private $lastInvoicePaid;
+    private $remark;
+    private $nickname;
+    private $clientIp;
 
     public function __construct()
     {
@@ -262,4 +267,85 @@ class ClientDTO
     {
         $this->paid = $paid;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getCreditLimit()
+    {
+        return $this->creditLimit;
+    }
+
+    /**
+     * @param mixed $creditLimit
+     */
+    public function setCreditLimit($creditLimit): void
+    {
+        $this->creditLimit = $creditLimit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastInvoicePaid()
+    {
+        return $this->lastInvoicePaid;
+    }
+
+    /**
+     * @param mixed $lastInvoicePaid
+     */
+    public function setLastInvoicePaid($lastInvoicePaid): void
+    {
+        $this->lastInvoicePaid = $lastInvoicePaid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRemark()
+    {
+        return $this->remark;
+    }
+
+    /**
+     * @param mixed $remark
+     */
+    public function setRemark($remark): void
+    {
+        $this->remark = $remark;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNickname()
+    {
+        return $this->nickname;
+    }
+
+    /**
+     * @param mixed $nickname
+     */
+    public function setNickname($nickname): void
+    {
+        $this->nickname = $nickname;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClientIp()
+    {
+        return $this->clientIp;
+    }
+
+    /**
+     * @param mixed $clientIp
+     */
+    public function setClientIp($clientIp): void
+    {
+        $this->clientIp = $clientIp;
+    }
+
 }

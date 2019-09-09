@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\DTO\PaymentDTO;
 use Core\Database\PrepareStatementInterface;
-use phpDocumentor\Reflection\Types\This;
 
 class PaymentRepository implements PaymentRepositoryInterface
 {
@@ -31,13 +30,11 @@ class PaymentRepository implements PaymentRepositoryInterface
 
     public function addPayment(PaymentDTO $payment): bool
     {
-        $sql = 'INSERT INTO payments (time, start_time, end_time, sum, operator, client)
-                VALUES (:time, :start, :end, :sum, :operator, :client)';
+        $sql = 'INSERT INTO payments (time, sum, operator, client)
+                VALUES (:time, :sum, :operator, :client);';
 
         $this->db->prepare($sql)
                 ->bindParam('time', $payment->getTime(), \PDO::PARAM_INT)
-                ->bindParam('start', $payment->getStartTime(), \PDO::PARAM_INT)
-                ->bindParam('end', $payment->getEndTime(), \PDO::PARAM_INT)
                 ->bindParam('sum', $payment->getSum(), \PDO::PARAM_INT)
                 ->bindParam('operator', $payment->getOperator(), \PDO::PARAM_INT)
                 ->bindParam('client', $payment->getClient(), \PDO::PARAM_INT)
@@ -48,7 +45,7 @@ class PaymentRepository implements PaymentRepositoryInterface
 
     public function getClientPayments($clientId): ?\Generator
     {
-        $sql = 'SELECT `time`, `start_time` as startTime, `end_time` as endTime, `sum`, staff.username
+        $sql = 'SELECT `time`, `sum`, staff.username as operator
                 FROM payments JOIN staff ON payments.operator = staff.id
                 WHERE payments.`client` = :clientId
                 ORDER BY time';

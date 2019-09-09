@@ -1,5 +1,11 @@
-<tr class="ready-payment">
-    <td class="start_payment">{{ start }}</td>
-    <td class="end_payment last_bill_to" last_bill_to="{{ endSeconds }}">{{ end }}</td>
-    <td> {{ sum }}лв.</td>
+<tr class="ready-payment selected">
+    <td class="has_time">{{ start }}</td>
+    <td class="has_time">{{ end }}</td>
+    <td>{{ sum }}</td>
+    <td class="has_time">{{ time }}</td>
+    {{# if paid }}
+        <td class="has_time">{{ paid }}</td>
+        {{ else }}
+        <td class="unpaid_invoice">-</td>
+    {{/if}}
 </tr>

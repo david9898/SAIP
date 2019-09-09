@@ -4,7 +4,7 @@
     <td class="text-left">{{ town }}</td>
     <td class="text-left">{{ street }}</td>
     {{#if paid }}
-        <td class="text-left {{ payment }}">{{ paid }} дни</td>
+        <td class="text-left {{ invoiceStatus }}">{{ paid }} дни</td>
         {{ else }}
         <td class="text-left">-</td>
     {{/if}}

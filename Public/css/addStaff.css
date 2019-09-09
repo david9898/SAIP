@@ -1,4 +1,4 @@
-section {
+#staff {
     padding-top: 80px;
     padding-bottom: 50px;
 }
@@ -121,6 +121,25 @@ section {
     margin-bottom: 10px;
 }
 
-#client_basic .second_form_fieldset select {
+#register_staff .second_form_fieldset select {
     height: 100px;
 }
+
+#edit_staff .second_form_fieldset select {
+    height: 100px;
+}
+
+#all_staff {
+    display: none;
+}
+
+.white-popup {
+    position: relative;
+    width:auto;
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+ body {
+     position: relative;
+ }

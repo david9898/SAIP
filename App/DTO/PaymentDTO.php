@@ -9,15 +9,15 @@ class PaymentDTO
 
     private $id;
     private $time;
-    private $startTime;
-    private $endTime;
     private $sum;
     private $operator;
     private $client;
 
     public function __construct()
     {
-        $this->time = time();
+        if ( $this->time === null ) {
+            $this->time = time();
+        }
     }
 
     /**
@@ -50,38 +50,6 @@ class PaymentDTO
     public function setTime($time): void
     {
         $this->time = $time;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStartTime()
-    {
-        return $this->startTime;
-    }
-
-    /**
-     * @param mixed $startTime
-     */
-    public function setStartTime($startTime): void
-    {
-        $this->startTime = $startTime;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEndTime()
-    {
-        return $this->endTime;
-    }
-
-    /**
-     * @param mixed $endTime
-     */
-    public function setEndTime($endTime): void
-    {
-        $this->endTime = $endTime;
     }
 
     /**

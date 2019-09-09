@@ -4,16 +4,20 @@
 namespace App\ApiController;
 
 
+use App\Repository\AbonamentRepository;
 use App\Repository\ClientRepository;
+use App\Repository\InvoiceRepository;
 use App\Repository\NeighborhoodRepository;
 use App\Repository\PaymentRepository;
 use App\Repository\StreetRepository;
 use App\Repository\TownRepository;
+use App\Service\AbonamentService;
 use App\Service\ClientService;
+use App\Service\InvoiceService;
+use App\Service\PaymentService;
 use Core\Controller\AbstractController;
 use Core\Database\PrepareStatementInterface;
 use Core\Request\Request;
-use Core\Session\Session;
 
 class ClientApiController extends AbstractController
 {
@@ -25,115 +29,42 @@ class ClientApiController extends AbstractController
         $streetRepo       = new StreetRepository($db);
         $townRepo         = new TownRepository($db);
         $neighborhoodRepo = new NeighborhoodRepository($db);
+        $abonamentRepo    = new AbonamentRepository($db);
+        $paymentRepo      = new PaymentRepository($db);
+        $invoiceRepo      = new InvoiceRepository($db);
         $clientService    = new ClientService();
+        $abonamentService = new AbonamentService();
         $request          = new Request();
 
-        $responce = $clientService->addClient($clientRepo, $streetRepo, $neighborhoodRepo, $townRepo, $request->getPOST());
+        $responce = $clientService->addClient($clientRepo, $streetRepo, $neighborhoodRepo, $townRepo,
+                                            $abonamentRepo, $paymentRepo, $invoiceRepo, $abonamentService,
+                                            $request->getContent());
 
         return $this->jsonResponce($responce);
     }
 
-    public function getMoreClients(PrepareStatementInterface $db, $csrfToken, $firstResult)
+    public function getClients(PrepareStatementInterface $db, $csrfToken, $firstResult)
     {
         $this->validateAccess(true);
 
-        $session = new Session();
+        $clientRepo    = new ClientRepository($db);
+        $clientService = new ClientService();
 
-        if ( $session->get('csrf_token') === $csrfToken ) {
-            $clientRepo = new ClientRepository($db);
+        $res = $clientService->getClients($clientRepo, $firstResult, $csrfToken);
 
-            $responce = $clientRepo->getMoreClients($firstResult);
-
-            if ( $responce !== null ) {
-                $clients = [];
-                foreach ($responce as $client) {
-                    $clients[] = $client;
-                }
-            }else {
-                return $this->jsonResponce(['status' => 'success', 'lastList' => 1]);
-            }
-
-            return $this->jsonResponce(['status' => 'success', 'clients' => $clients]);
-
-        }else {
-            return $this->jsonResponce(['status' => 'error', 'description' => 'Грешен токен']);
-        }
+        return $this->jsonResponce($res);
     }
 
     public function getSearchFriends(PrepareStatementInterface $db, $csrfToken, $firstResult, $pattern)
     {
         $this->validateAccess(true);
 
-        $session = new Session();
+        $clientRepo    = new ClientRepository($db);
+        $clientService = new ClientService();
 
-        if ( $session->get('csrf_token') === $csrfToken ) {
-            $clientRepo = new ClientRepository($db);
+        $res = $clientService->getSearchFriends($clientRepo, $firstResult, $csrfToken, $pattern);
 
-            if ( $pattern !== null ) {
-                $patterns = explode(' ', urldecode($pattern));
-
-                $clients = $clientRepo->searchFriends($patterns, $firstResult);
-
-                if ($clients !== null) {
-                    $responce = [];
-                    $responce['status'] = 'success';
-
-                    foreach ($clients as $client) {
-                        if ( $client['paid'] !== null ) {
-                            $diffTime = $client['paid'] - time();
-                            $client['paid'] = floor($diffTime / 86400);
-
-                            if ( $diffTime > 0 ) {
-                                $client['payment'] = 'paid';
-                            }
-
-                            if ( $diffTime < -7905600 ) {
-                                $client['payment'] = 'delay';
-                                $client['paid']    = -91;
-                            }
-
-                            if ( $diffTime > -7905600 && $diffTime <= 0 ) {
-                                $client['payment'] = 'overdue';
-                            }
-                        }
-
-                        $responce['clients'][] = $client;
-                    }
-
-                    return $this->jsonResponce($responce);
-                } else {
-
-                }
-            }else {
-                $responce = [];
-                $responce['status'] = 'success';
-                $clients = $clientRepo->getMoreClients($firstResult);
-                foreach ($clients as $client) {
-                    if ( $client['paid'] !== null ) {
-                        $diffTime = $client['paid'] - time();
-                        $client['paid'] = floor($diffTime / 86400);
-
-                        if ( $diffTime > 0 ) {
-                            $client['payment'] = 'paid';
-                        }
-
-                        if ( $diffTime < -7905600 ) {
-                            $client['payment'] = 'delay';
-                            $client['paid']    = -91;
-                        }
-
-                        if ( $diffTime > -7905600 && $diffTime <= 0 ) {
-                            $client['payment'] = 'overdue';
-                        }
-                    }
-
-                    $responce['clients'][] = $client;
-                }
-                return $this->jsonResponce($responce);
-            }
-        }else {
-            return $this->jsonResponce(['status' => 'error', 'description' => 'Грешен токен']);
-        }
+        return $this->jsonResponce($res);
     }
 
 
@@ -141,12 +72,39 @@ class ClientApiController extends AbstractController
     {
         $this->validateAccess(1);
 
-        $request       = new Request();
-        $clientRepo    = new ClientRepository($db);
-        $paymentRepo   = new PaymentRepository($db);
-        $clientService = new ClientService();
+        $request        = new Request();
+        $clientRepo     = new ClientRepository($db);
+        $paymentRepo    = new PaymentRepository($db);
+        $paymentService = new PaymentService();
 
-        $responce = $clientService->addPayment($request, $paymentRepo, $clientRepo);
+        $responce = $paymentService->addPayment($request, $paymentRepo, $clientRepo);
+
+        return $this->jsonResponce($responce);
+    }
+
+    public function getIncomeToAccount($db, $abonamentId, $csrfToken)
+    {
+        $this->validateAccess(1);
+
+        $abonamentRepo    = new AbonamentRepository($db);
+        $abonamentService = new AbonamentService();
+
+        $responce = $abonamentService->getIncomeAccount($abonamentRepo, $abonamentId, $csrfToken);
+
+        return $this->jsonResponce($responce);
+    }
+
+    public function payInvoices($db)
+    {
+        $this->validateAccess(1);
+
+        $clientRepo     = new ClientRepository($db);
+        $invoiceRepo    = new InvoiceRepository($db);
+        $paymentRepo    = new PaymentRepository($db);
+        $invoiceService = new InvoiceService();
+        $request        = new Request();
+
+        $responce = $invoiceService->payInvoices($invoiceRepo, $paymentRepo, $clientRepo,$request->getContent());
 
         return $this->jsonResponce($responce);
     }

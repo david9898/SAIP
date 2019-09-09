@@ -14,4 +14,7 @@ interface AbonamentRepositoryInterface
     public function checkIfAbonamentExist(string $name): ?AbonamentDTO;
 
     public function addAbonament(AbonamentDTO $abonamentDTO): bool;
+
+    public function getAbonamentPrice($id): AbonamentDTO;
+
 }

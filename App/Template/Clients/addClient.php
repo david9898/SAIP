@@ -20,13 +20,6 @@
                         <input type="text" class="phone" placeholder="Телефон *">
                         <input type="email" class="email" placeholder="Имейл *">
 
-                        <label for="abonament">Абонамент:</label>
-                        <select id="abonament">
-                            <option selected value="none">-</option>
-                            <?php foreach ( $data['abonaments'] as $abonament ): ?>
-                                <option value="<?= $abonament->getId() ?>"><?= $abonament->getName() ?></option>
-                            <?php endforeach; ?>
-                        </select>
                     </div>
 
                     <div>
@@ -38,13 +31,24 @@
                             <?php endforeach; ?>
                         </select>
 
+                        <input type="text" class="neighborhood" placeholder="Квартал *">
+
                         <input type="text" class="street" placeholder="Улица *">
 
                         <input type="text" class="street_number" placeholder="Номер улица *">
 
-                        <input type="text" class="neighborhood" placeholder="Квартал *">
-
                         <textarea placeholder="Описание на адреса" class="description"></textarea>
+
+                        <label for="abonament">Абонамент:</label>
+                        <select id="abonament">
+                            <option selected value="none">-</option>
+                            <?php foreach ( $data['abonaments'] as $abonament ): ?>
+                                <option value="<?= $abonament->getId() ?>"><?= $abonament->getName() ?></option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <input type="text" class="credit_limit" placeholder="кредитен лимит *">
+
                     </div>
                 </fieldset>
                 <input type="hidden" class="csrf_token" name="csrf_token" value="<?= $data['csrf_token'] ?>">

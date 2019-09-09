@@ -20,8 +20,30 @@ class PrepareStatement implements PrepareStatementInterface
 
     public function prepare(string $sql): ExecuteStatementInterface
     {
-            $stmt = $this->db->prepare($sql);
+        $stmt = $this->db->prepare($sql);
 
-            return new ExecuteStatement($stmt);
+        return new ExecuteStatement($stmt);
     }
+
+    public function lastInsertId()
+    {
+        return $this->db->lastInsertId();
+    }
+
+    public function beginTransaction(): bool
+    {
+        return $this->db->beginTransaction();
+    }
+
+    public function commit(): bool
+    {
+        return $this->db->commit();
+    }
+
+    public function rollBack(): bool
+    {
+        return $this->db->rollBack();
+    }
+
+
 }

@@ -1,4 +1,4 @@
-.add_payment table {
+.client_payments table {
     border-bottom: none;
     border-top: none;
     border-left: none;
@@ -6,11 +6,11 @@
     margin-bottom: 50px;
 }
 
-.add_payment table tr:hover {
+.client_payments table tr:hover {
     cursor: pointer;
 }
 
-.add_payment tfoot tr td {
+.client_payments tfoot tr td {
     border-top: none;
 }
 
@@ -23,18 +23,18 @@
     margin-bottom: 18px;
 }
 
-.add_payment thead {
+.client_payments thead {
     color: black;
     text-align: center;
 }
 
-.add_payment thead th {
+.client_payments thead th {
     padding: 7px;
     width: 170px;
     font-size: 18px;
 }
 
-.add_payment td {
+.client_payments td {
     text-align: center;
     padding: 10px 0px;
 
@@ -45,7 +45,7 @@
     text-align: center;
 }
 
-.add_payment div  legend {
+.client_payments div  legend {
     text-align: center;
     background-color: #FF0000;
     color: white;
@@ -57,24 +57,24 @@
     color: white;
 }
 
-.add_payment table {
+.client_payments table {
     border-collapse: collapse;
 }
-.add_payment table td, table th {
+.client_payments table td, table th {
     border: 1px solid black;
 }
-.add_payment table tr:first-child th {
+.client_payments table tr:first-child th {
     border-top: 0;
 }
-.add_payment table tr:last-child td {
+.client_payments table tr:last-child td {
     border-bottom: 0;
 }
-.add_payment table tr td:first-child,
-.add_payment table tr th:first-child {
+.client_payments table tr td:first-child,
+.client_payments table tr th:first-child {
     border-left: 0;
 }
-.add_payment table tr td:last-child,
-.add_payment table tr th:last-child {
+.client_payments table tr td:last-child,
+.client_payments table tr th:last-child {
     border-right: 0;
 }
 
@@ -135,3 +135,17 @@ section {
     background-color: #848484;
     padding: 20px;
 }
+
+.second_level_payment {
+    display: flex;
+    display: none;
+    justify-content: space-between;
+}
+
+#printing {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    display: none;
+}
+

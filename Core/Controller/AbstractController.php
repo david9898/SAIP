@@ -23,7 +23,7 @@ abstract class AbstractController
 
     protected function redirect($url)
     {
-        $baseUrl = 'http://localhost:82/Network_project';
+        $baseUrl = 'http://linda.itn.bg';
 
         header("Location: " . $baseUrl . $url);
 
@@ -62,7 +62,13 @@ abstract class AbstractController
                     throw new AccessDenyException('You have no access');
                 }
             }else {
-                return true;
+                $userData = $session->get('userData');
+
+                if ( $userData !== null ) {
+                    return true;
+                }else {
+                    $this->redirect('/login');
+                }
             }
         }else {
             if ( $session->checkIfKeyExist('userData') ) {

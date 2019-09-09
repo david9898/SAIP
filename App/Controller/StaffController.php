@@ -5,6 +5,7 @@ namespace App\Controller;
 
 
 use App\Repository\AbonamentRepository;
+use App\Repository\RoleRepository;
 use App\Repository\StaffRepository;
 use App\Repository\StreetRepository;
 use App\Repository\TownRepository;
@@ -60,38 +61,34 @@ class StaffController extends AbstractController
     {
         $this->validateAccess(1, 'ROLE_ADMIN');
 
-        $request = new Request();
+        $roleRepo  = new RoleRepository($db);
+        $staffRepo = new StaffRepository($db);
 
-        if ( $request->isSubmit('add_staff') ) {
-            $staffRepository = new StaffRepository($db);
-            $staffService    = new StaffService();
+        $csrfToken = $this->generateCsrfToken();
+        $customers = $staffRepo->getAllCustomers();
+        $rolesGen  = $roleRepo->getAllRoles();
+        $roles = [];
 
-            $res = $staffService->registerStaff($staffRepository, $request->getPOST());
-
-            if ( $res ) {
-                $this->redirect('/clients');
-            }else {
-                $csrfToken = $this->generateCsrfToken();
-
-                $this->render('Staff/registerStaff.php', [
-                    'css' => [
-                        'styles/header.css',
-                        'styles/addStaff.css'
-                    ],
-                    'csrf_token' => $csrfToken
-                ]);
-            }
-        }else {
-            $csrfToken = $this->generateCsrfToken();
-
-            $this->render('Staff/registerStaff.php', [
-                'css' => [
-                    'styles/header.css',
-                    'styles/addStaff.css'
-                ],
-                'csrf_token' => $csrfToken
-            ]);
+        foreach ($rolesGen as $role) {
+            $roles[] = $role;
         }
+
+        $this->render('Staff/registerStaff.php', [
+            'css' => [
+                'node_modules/magnific-popup/dist/magnific-popup.css',
+                'styles/header.css',
+                'styles/addStaff.css'
+            ],
+            'js' => [
+                'node_modules/magnific-popup/dist/jquery.magnific-popup.js',
+                'scripts/addStaff.js',
+                'node_modules/sweetalert/dist/sweetalert.min.js'
+            ],
+            'csrf_token' => $csrfToken,
+            'roles'      => $roles,
+            'customers'  => $customers
+        ]);
+
     }
 
     public function addAbonament($db)
@@ -169,4 +166,6 @@ class StaffController extends AbstractController
             ]);
         }
     }
+
+
 }

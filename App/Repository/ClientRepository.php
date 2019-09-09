@@ -4,7 +4,7 @@
 namespace App\Repository;
 
 use App\DTO\ClientDTO;
-use App\DTO\PaymentDTO;
+use App\DTO\OldDTO;
 use Core\Database\PrepareStatementInterface;
 
 class ClientRepository implements ClientRepositoryInterface
@@ -16,48 +16,33 @@ class ClientRepository implements ClientRepositoryInterface
         $this->db = $db;
     }
 
-    public function addClient(ClientDTO $client): bool
+    public function addClient(ClientDTO $client)
     {
         $sql = 'INSERT INTO clients(town, abonament, neighborhood, first_name, last_name, 
-                                    phone, email, street, date_register, description, street_number)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                                    phone, email, street, date_register, description, street_number, 
+                                    credit_limit, remark, nickname, client_ip)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
         $this->db->prepare($sql)
                 ->execute([$client->getTown(), $client->getAbonament(), $client->getNeighborhood(), $client->getFirstName(),
                         $client->getLastName(), $client->getPhone(), $client->getEmail(), $client->getStreet(),
-                        $client->getDateRegister(), $client->getDescription(), $client->getStreetNumber()]);
+                        $client->getDateRegister(), $client->getDescription(), $client->getStreetNumber(), $client->getCreditLimit(),
+                        $client->getRemark(), $client->getNickname(), $client->getClientIp()]);
 
-        return true;
+        return $this->db->lastInsertId();
     }
 
-    public function getClients(): \Generator
+    public function getClients($firstResult): ?\Generator
     {
         $sql = 'SELECT abonaments.name as abonament, towns.name as town, streets.name as street, 
-                first_name as firstName, last_name as lastName, payments.end_time as paid, clients.id
+                first_name as firstName, last_name as lastName, invoices.end as paid, clients.id,
+                invoices.paid_time as lastInvoicePaid 
                 FROM clients
                 JOIN abonaments ON abonaments.id = clients.abonament
                 JOIN towns ON towns.id = clients.town
                 JOIN streets ON streets.id = clients.street
-                LEFT JOIN payments ON payments.id = 
-                (SELECT id FROM payments WHERE `client` = clients.id ORDER BY id DESC LIMIT 1)
-                ORDER BY clients.id DESC
-                LIMIT 20';
-
-        return $this->db->prepare($sql)
-                        ->execute()
-                        ->fetchObject(ClientDTO::class);
-    }
-
-    public function getMoreClients($firstResult): ?\Generator
-    {
-        $sql = 'SELECT abonaments.name as abonament, streets.name as street, towns.name as town, 
-                first_name as firstName, last_name as lastName, clients.id, payments.end_time as paid
-                FROM clients
-                JOIN abonaments ON abonaments.id = clients.abonament
-                JOIN towns ON towns.id = clients.town
-                JOIN streets ON streets.id = clients.street
-                LEFT JOIN payments ON payments.id = 
-                (SELECT id FROM payments WHERE `client` = clients.id ORDER BY id DESC LIMIT 1)
+                LEFT JOIN invoices ON invoices.id = 
+                (SELECT id FROM invoices WHERE `client` = clients.id AND paid_time IS NOT NULL ORDER BY id DESC LIMIT 1)
                 ORDER BY clients.id DESC
                 LIMIT :firstResult, 20';
 
@@ -69,24 +54,25 @@ class ClientRepository implements ClientRepositoryInterface
 
     public function searchFriends($patterns, $firstResult): ?\Generator
     {
-        $sql = 'SELECT abonaments.name as abonament, streets.name as street, 
-                towns.name as town, payments.end_time as paid, first_name as firstName, last_name as lastName, clients.id
+        $sql = 'SELECT abonaments.name as abonament, towns.name as town, streets.name as street, 
+                first_name as firstName, last_name as lastName, invoices.end as paid, clients.id,
+                invoices.paid_time as lastInvoicePaid 
                 FROM clients
                 JOIN abonaments ON abonaments.id = clients.abonament
                 JOIN towns ON towns.id = clients.town
                 JOIN streets ON streets.id = clients.street
-                LEFT JOIN payments ON payments.id =     
-                (SELECT id FROM payments WHERE `client` = clients.id ORDER BY id DESC LIMIT 1)';
+                LEFT JOIN invoices ON invoices.id =  
+                (SELECT id FROM invoices WHERE `client` = clients.id AND paid_time IS NOT NULL ORDER BY id DESC LIMIT 1)';
 
         $sql = $sql . ' WHERE ';
 
         for ($i=0;$i<count($patterns);$i++) {
             if ( $i !== count($patterns) - 1 ) {
-                $sql = $sql . ' CONCAT(abonaments.name, towns.name, streets.name, clients.first_name, 
-                clients.last_name, clients.email) LIKE :pattern' . $i .' AND ';
+                $sql = $sql . ' CONCAT_WS(abonaments.name, towns.name, streets.name, clients.first_name, 
+                clients.last_name, clients.email, clients.phone, clients.nickname) LIKE :pattern' . $i .' AND ';
             }else {
-                $sql = $sql . ' CONCAT(abonaments.name, towns.name, streets.name, clients.first_name, 
-                clients.last_name, clients.email) LIKE :pattern' . $i . ' ';
+                $sql = $sql . ' CONCAT_WS(abonaments.name, towns.name, streets.name, clients.first_name, 
+                clients.last_name, clients.email, clients.phone, clients.nickname) LIKE :pattern' . $i . ' ';
             }
         }
 
@@ -105,8 +91,9 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $sql = 'SELECT abonaments.name as abonament, abonaments.price as sum,
                 streets.name as street, towns.name as town, date_register as register,
-                neighborhoods.name as neighborhood, email, first_name as firstName, 
-                last_name as lastName, phone, street_number as streetNumber
+                neighborhoods.name as neighborhood, clients.description as description, 
+                email, first_name as firstName, last_name as lastName, phone, 
+                street_number as streetNumber, remark, nickname
                 FROM clients
                 JOIN abonaments ON abonaments.id = clients.abonament
                 JOIN towns ON towns.id = clients.town
@@ -144,4 +131,54 @@ class ClientRepository implements ClientRepositoryInterface
                         ->fetchObject(ClientDTO::class)
                         ->current();
     }
+
+    public function getClientsIdsAndSums(): \Generator
+    {
+        $sql = 'SELECT clients.id, abonaments.price as sum FROM clients
+                JOIN abonaments ON clients.abonament = abonaments.id';
+
+        return $this->db->prepare($sql)
+                        ->execute()
+                        ->fetchObject(ClientDTO::class);
+    }
+
+    /** DELETE */
+
+    public function getFromOld(): \Generator
+    {
+        $sql = 'SELECT id, clientid as street, tag as name, name as phone, notes, 
+                description as remark, startdate as lastInvoicePaid, deadline as stopService, 
+                deadline2 as stopService2, progress, clientip as clientIp, disabled
+                FROM old WHERE disabled = 0';
+
+        return $this->db->prepare($sql)
+                        ->execute()
+                        ->fetchObject(OldDTO::class);
+    }
+
+    public function getCertainOld($id): OldDTO
+    {
+        $sql = 'SELECT id, clientid as street, tag as name, name as phone, notes, 
+                description as remark, startdate as lastInvoicePaid, deadline as stopService, 
+                deadline2 as stopService2, progress, clientip as clientIp, disabled
+                FROM old WHERE disabled = 0 AND id = :id';
+
+        return $this->db->prepare($sql)
+                        ->bindParam('id', $id, \PDO::PARAM_INT)
+                        ->execute()
+                        ->fetchObject(OldDTO::class)
+                        ->current();
+    }
+
+    public function disableOldClient($id): bool
+    {
+        $sql = 'UPDATE old SET disabled = 1 WHERE id = :oldId';
+
+        $this->db->prepare($sql)
+                ->bindParam('oldId', $id, \PDO::PARAM_INT)
+                ->execute();
+
+        return true;
+    }
+
 }

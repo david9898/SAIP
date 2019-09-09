@@ -11,4 +11,6 @@ interface AbonamentServiceInterface
 {
     public function addAbonament(AbonamentRepositoryInterface $abonamentRepository, $postArr): bool ;
 
+    public function getIncomeAccount(AbonamentRepositoryInterface $abonamentRepository, $abonamentId, $csrfToken): array ;
+
 }

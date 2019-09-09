@@ -1,111 +1,106 @@
-<?php /** @var \App\DTO\ClientDTO $client */ $client = $data['client']; /** @var \App\DTO\PaymentDTO $payment */ ?>
+<?php /** @var \App\DTO\ClientDTO $client */ $client = $data['client']; /** @var \App\DTO\PaymentDTO $payment */ /** @var \App\DTO\InvoiceDTO $invoice */?>
 
-<section>
+<section id="body">
 
     <div class="client-nav">
         <button class="client-info-btn selected-part-view">Инфо</button>
-        <button class="client-payment-btn unselected-part-view">Плащания</button>
+        <button class="client-invoices-btn unselected-part-view">Фактури</button>
+<!--        <button class="client-payment-btn unselected-part-view">Плащания</button>-->
+        <button class="client-statement-btn unselected-part-view">Състояние на акаунт</button>
     </div>
 
     <div class="client-data">
         <div class="client_info">
             <div class="client_info_first">
                 <div><img src="images/basicImages/User.png"></div>
-                <p>Име: <?= $client->getFirstName() ?></p>
-                <p>Фамилия: <?= $client->getLastName() ?></p>
+                <p>Име: <span class="first_name"><?= $client->getFirstName() ?></span></p>
+                <p>Фамилия: <span class="last_name"><?= $client->getLastName() ?></span></p>
                 <p>Абонамент: <?= $client->getAbonament() ?></p>
                 <p>Град: <?= $client->getTown() ?></p>
-                <p>Улица: <?= $client->getStreet() ?></p>
+                <p>Улица: <span class="address"><?= $client->getStreet() ?></span></p>
                 <p>Телефон: <?= $client->getPhone() ?></p>
                 <p>Квартал: <?= $client->getNeighborhood() ?></p>
                 <p>Имейл: <?= $client->getEmail() ?></p>
                 <p>Улица номер: <?= $client->getStreetNumber() ?></p>
-                <p>Добавен: <span class="date_register"><?= $client->getRegister() ?></span></p>
+                <p>Добавен: <span class="date_register has_time"><?= $client->getRegister() ?></span></p>
                 <p>Описание на адреса: <?= $client->getDescription() ?></p>
+                <p>Псевдоним: <?= $client->getNickname() ?></p>
+                <p>Ремарк: <?= $client->getRemark() ?></p>
             </div>
         </div>
 
-        <div class="add_payment">
+        <div class="client_invoices">
+            <div id="printing">
 
-            <form class="prevent_submit" method="POST">
-                <div class="form-style-5">
-                    <form class="prevent_submit" method="POST">
-                        <fieldset class="second_form_fieldset">
-                            <div>
-                                <div class="bills_form">
-                                    <h4>Сметки</h4>
+            </div>
 
-                                    <?php if ( $data['payments'] !== null ): ?>
+            <table class="bills_table">
 
-                                        <table class="bills_table">
+                <thead>
+                    <tr>
+                        <th>От</th>
+                        <th>До</th>
+                        <th>Цена</th>
+                        <th>Издадена</th>
+                        <th>Платена</th>
+                    </tr>
+                </thead>
 
-                                            <thead>
-                                                <th>От</th>
-                                                <th>До</th>
-                                                <th>Цена</th>
-                                            </thead>
+                <tbody>
 
-                                            <tbody>
+                    <?php foreach ($data['invoices'] as $invoice): ?>
 
-                                                <?php foreach ($data['payments'] as $payment): ?>
-                                                    <tr class="active">
-                                                        <td class="start_payment"><?= $payment->getStartTime() ?></td>
-                                                        <td class="end_payment"><?= $payment->getEndTime() ?></td>
-                                                        <td><?= $client->getSum() ?>лв.</td>
-                                                    </tr>
-                                                <?php endforeach; ?>
+                        <?php if ( $invoice->getTimePaid() !== null ): ?>
+                            <tr class="active">
+                        <?php else: ?>
+                            <tr class="ready-payment">
+                        <?php endif; ?>
 
-                                                <?php if ( $data['bills']['delay'] !== 'none' ): ?>
+                            <td class="has_time"><?= $invoice->getStart() ?></td>
+                            <td class="has_time end_time"><?= $invoice->getEnd() ?></td>
+                            <td class="client_invoice_sum"><?= $invoice->getSum() ?></td>
+                            <td class="has_time"><?= $invoice->getTime() ?></td>
 
-                                                    <?php for ($i = 0;$i < count($data['bills']['bills']); $i++): ?>
-                                                        <?php if ( $i === count($data['bills']['bills']) - 1 ): ?>
-                                                            <tr class="ready-payment">
-                                                                <td class="start_payment"><?= $data['bills']['bills'][$i]['start'] ?></td>
-                                                                <td class="end_payment last_bill_to" last_bill_to="<?= $data['bills']['bills'][$i]['end'] ?>"><?= $data['bills']['bills'][$i]['end'] ?></td>
-                                                                <td><?= $client->getSum() ?>лв.</td>
-                                                            </tr>
-                                                        <?php else: ?>
-                                                            <tr class="ready-payment">
-                                                                <td class="start_payment"><?= $data['bills']['bills'][$i]['start'] ?></td>
-                                                                <td class="end_payment"><?= $data['bills']['bills'][$i]['end'] ?></td>
-                                                                <td><?= $client->getSum() ?>лв.</td>
-                                                            </tr>
-                                                        <?php endif; ?>
-                                                    <?php endfor; ?>
-                                                <?php endif; ?>
+                            <?php if ( $invoice->getTimePaid() !== null ): ?>
+                                <td class="has_time"><?= $invoice->getTimePaid() ?></td>
+                                <?php else: ?>
+                                <td class="unpaid_invoice">-</td>
+                            <?php endif; ?>
+                        </tr>
 
-                                            </tbody>
+                    <?php endforeach; ?>
 
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="3">Цена: <span class="final_price_bill"><?= count($data['bills']['bills']) * $client->getSum() ?></span>лв.</td>
-                                                </tr>
-                                            </tfoot>
+                </tbody>
 
-                                        </table>
+                <tfoot>
+                    <tr>
 
-                                        <?php else: ?>
-                                            <p>Няма досегашни плащания</p>
-                                            <div class="bill_table_container">
+                    </tr>
+                </tfoot>
 
-                                            </div>
-                                    <?php endif; ?>
-                                    </div>
-                                    <button class="add_bill_button">Добави сметка</button>
-                                    <input type="hidden" id="bills"
-                                           price="<?= $client->getSum() ?>"
-                                           lastTime="<?= $data['bills']['lastTime'] ?>"
-                                           value="<?= count($data['bills']['bills']) * $client->getSum() ?>">
-                                </div>
-                                <input type="submit" id="addPayment" name="add_payment" value="Направи плащане" />
-                            </div>
-                        </fieldset>
-                        <input type="hidden" class="csrf_token" id="csrf_token" name="csrf_token" value="<?= $data['csrf_token'] ?>">
-                    </form>
-                </div>
-            </form>
+            </table>
 
+            <br />
+            <br />
+
+            <button class="add_invoices">Плати фактурите</button>
+
+            <div class="second_level_payment">
+                <button class="refuse_invoices">Отказ</button>
+                <button class="add_payment">Плащане</button>
+            </div>
         </div>
+
+        <div class="client_account_status">
+            <div>status</div>
+        </div>
+
     </div>
 
+    <input type="hidden" class="csrf_token" id="csrf_token" name="csrf_token" value="<?= $data['csrf_token'] ?>">
+    <input type="hidden" class="last_invoice_time" value="<?= $data['lastInvoice'] ?>">
+
 </section>
+
+
+

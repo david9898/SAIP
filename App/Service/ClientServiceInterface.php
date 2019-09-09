@@ -4,32 +4,26 @@
 namespace App\Service;
 
 
+use App\Repository\AbonamentRepositoryInterface;
 use App\Repository\ClientRepositoryInterface;
+use App\Repository\InvoiceRepositoryInterface;
 use App\Repository\NeighborhoodRepositoryInterface;
 use App\Repository\PaymentRepositoryInterface;
 use App\Repository\StreetRepositoryInterface;
 use App\Repository\TownRepositoryInterface;
-use Core\Request\Request;
 
 interface ClientServiceInterface
 {
     public function addClient(ClientRepositoryInterface $clientRepo, StreetRepositoryInterface $streetRepo,
                               NeighborhoodRepositoryInterface $neighborhoodRepo, TownRepositoryInterface $townRepo,
-                              array $post): array ;
+                              AbonamentRepositoryInterface $abonamentRepo, PaymentRepositoryInterface $paymentRepo,
+                              InvoiceRepositoryInterface $invoiceRepo, AbonamentServiceInterface $abonamentService,
+                              $post): array ;
 
-    public function getClients(ClientRepositoryInterface $repository): array;
+    public function getClients(ClientRepositoryInterface $repository, $firstResult, $csrfToken): array;
 
-    public function addPayment(Request $request, PaymentRepositoryInterface $paymentRepo,
-                                ClientRepositoryInterface $clientRepo): array;
+    public function getSearchFriends(ClientRepositoryInterface $clientRepository, $firstResult, $csrfToken, $pattern): array;
 
-    public function calculateBills(PaymentRepositoryInterface $paymentRepo, $id): array;
-
-    public function checkIfPaymentsAreReadable(?\Generator $payments): ?bool;
-
-    public function calculateBillsIfTrueOrNull(PaymentRepositoryInterface $paymentRepo, $id): array;
-
-    public function calculateBillsIfFalse(PaymentRepositoryInterface $paymentRepo, $id): array;
-
-    public function makeBillsReadable(array $bills, $lastThreePayments): array;
+    public function calculateClientsTimeToBills(?\Generator $clients): ?array;
 
 }

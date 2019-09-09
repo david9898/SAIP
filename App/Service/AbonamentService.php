@@ -57,4 +57,40 @@ class AbonamentService implements AbonamentServiceInterface
         }
     }
 
+    public function getIncomeAccount(AbonamentRepositoryInterface $abonamentRepository, $abonamentId, $csrfToken): array
+    {
+        try {
+            Validator::validateInt($abonamentId);
+
+            $session = new Session();
+
+            if ($session->get('csrf_token') === $csrfToken) {
+                $abonamentPrice = (int)$abonamentRepository->getAbonamentPrice($abonamentId)->getPrice();
+                $daysInMounth = (int)date('t');
+                $currentDate = (int)date('d') - 1;
+
+                $pricePerDay = $abonamentPrice / $daysInMounth;
+                $priceToEndOfMounth = ($daysInMounth - $currentDate) * $pricePerDay;
+
+                return [
+                    'status'             => 'success',
+                    'priceToEndOfMounth' => ceil($priceToEndOfMounth),
+                    'start'              => time(),
+                    'end'                => strtotime(date('Y-n-t 23:59:59')),
+                    'creditLimit'        => $abonamentPrice * 2
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'description' => 'Грешен токен'
+                ];
+            }
+        }catch (ValidationExeption $exception) {
+            return [
+                'status'      => 'error',
+                'description' => $exception->getMessage()
+            ];
+        }
+    }
+
 }
